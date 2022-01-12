@@ -130,7 +130,6 @@ while running:
             current_piece.column -= 1
 
 
-
     pygame.display.update()
     clock.tick(FPS)
 
