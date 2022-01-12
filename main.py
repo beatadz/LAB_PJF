@@ -16,7 +16,7 @@ block_side = 40
 columns = 13
 rows = 20
 
-line_thick = 5
+line_thickness = 5
 
 clock = pygame.time.Clock()
 FPS = 60
@@ -31,51 +31,49 @@ def random_shape():
     return random.choice(shapes)
 
 def draw_frame():
-    pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2*line_thick, board_height], line_thick)
+    pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
 def draw_grid():
     for i in range(0,columns):
         for j in range(0, rows):
-            pygame.draw.rect(screen, [255,255,255], [line_thick + (i * block_side), line_thick + (j * block_side), block_side, block_side], 1)
-            rect = Rect(line_thick + (i * block_side), line_thick + (j * block_side), block_side, block_side)
+            pygame.draw.rect(screen, [255,255,255], [line_thickness + (i * block_side), line_thickness + (j * block_side), block_side, block_side], 1)
+            rect = Rect(line_thickness + (i * block_side), line_thickness + (j * block_side), block_side, block_side)
             #rectangles.append((i * block_side, j * block_side))
             rectangles.append(rect)
 
 def get_tetris_shape():
     return Piece(4, 0, random_shape())
 
-def draw_shape(current_piece):
+def draw_shape(current_piece, nr):
     i = j = k = 0
-    # i - position, j - row, k - column
+    # nr - position, j - row, k - column, i - index of column_row
     #print(current_piece.shape)
     x = current_piece.shape
     while j < 4:
         while k < 4:
-            if x[i][j][k] == '1':
-                pygame.draw.rect(screen, current_piece.color, [line_thick + ((current_piece.column + k) * block_side), line_thick + ((current_piece.row + j) * block_side), block_side, block_side], 0)
+            if x[nr][j][k] == '1':
+                pygame.draw.rect(screen, current_piece.color, [line_thickness + ((current_piece.column + k) * block_side), line_thickness + ((current_piece.row + j) * block_side), block_side, block_side], 0)
                 #rectangle = Rect(line_thick + ((current_piece.column + k) * block_side),line_thick + ((current_piece.row + j) * block_side), block_side, block_side)
-                point = line_thick + ((current_piece.column + k) * block_side),line_thick + ((current_piece.row + j) * block_side)
+                point = line_thickness + ((current_piece.column + k) * block_side), line_thickness + ((current_piece.row + j) * block_side)
                 current_piece.positions_list.append(point)
-                c_r = current_piece.column + k, current_piece.row + j
-                current_piece.column_row_list.append(c_r)
+                current_piece.column_row[i] = current_piece.column + k, current_piece.row + j
+                i += 1
             k += 1
         j += 1
         k = 0
         #print("\n")
 
 def check_right(current_piece):
-    column = 0
     end = True
-    for z in current_piece.column_row_list:
-        if z[column] == 12:
+    for x in current_piece.column_row:
+        if x[0] >= 12:
             end = False
     return end
 
 def check_left(current_piece):
-    column = 0
     end = True
-    for z in current_piece.column_row_list:
-        if z[column] == 0:
+    for x in current_piece.column_row:
+        if x[0] <= 0:
             end = False
     return end
 
@@ -85,6 +83,7 @@ screen = pygame.display.set_mode((screen_width, screen_height), pygame.SRCALPHA)
 pygame.display.set_caption("TETRIS")
 icon = pygame.image.load("resources/TetrisIcon.png")
 pygame.display.set_icon(icon)
+
 #Load images
 #Tu kiedyś dodam logo i guziki
 
@@ -94,11 +93,16 @@ falling = clock.tick(FPS)
 
 screen.fill((192, 192, 192)) # change background color
 running = True
+
 # Game Loop
 while running:
     key = pygame.key.get_pressed()
     screen.fill((192, 192, 192))
     falling += clock.tick(FPS)
+
+    draw_grid()
+    draw_frame()
+    draw_shape(current_piece, 0)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -125,9 +129,7 @@ while running:
         if left == 0 and c_left is True:
             current_piece.column -= 1
 
-    draw_grid()
-    draw_frame()
-    draw_shape(current_piece)
+
 
     pygame.display.update()
     clock.tick(FPS)

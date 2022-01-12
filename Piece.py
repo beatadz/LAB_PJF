@@ -9,4 +9,4 @@ class Piece(object):
         self.color = shape_colors[random.randint(0, 6)]
         self.rotation = 0
         self.positions_list = []
-        self.column_row_list = []
+        self.column_row = [(1,1),(1,1),(1,1),(1,1)]
