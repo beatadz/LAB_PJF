@@ -39,7 +39,10 @@ pygame.display.set_icon(icon)
 #Tu kiedyś dodam logo i guziki
 
 grid1 = grid.Grid(columns, rows, screen, line_thickness, block_side)
-current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, 6)], grid1)
+current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, 6)], grid1, columns, rows)
+
+if current_piece.shape == shapes.S2:
+    current_piece.column += 1
 
 #next_piece = get_tetris_shape()
 falling = clock.tick(FPS)
@@ -73,11 +76,13 @@ while running:
     c_right = current_piece.check_right()
     c_left = current_piece.check_left()
     c_bottom = current_piece.check_bottom()
+    current_piece.check_full_line()
 
     if key[pygame.K_SPACE]:
         if rotation_counter > rotation_speed:
             current_piece.rotation += 1
             rotation_counter = 0
+
     if key[pygame.K_DOWN]:
         is_down = True
         if move_counter > move_speed and c_bottom is True:
@@ -95,7 +100,7 @@ while running:
     if falling / speed > 0.1 and is_down is False:
         current_piece.row += 1
         #print(current_piece.column, current_piece.row)
-        #print(current_piece.check_left(), current_piece.check_right())
+        print(current_piece.check_left(), current_piece.check_right())
         falling = 0
 
     pygame.display.update()

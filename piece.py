@@ -2,9 +2,10 @@ import shapes
 import random
 import pygame
 import grid
+import score
 
 class Piece(object):
-    def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid):
+    def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid, columns, rows):
         self.column = column
         self.row = row
         self.shape = shape
@@ -16,6 +17,8 @@ class Piece(object):
         self.column_row = [(1,1),(1,1),(1,1),(1,1)]
         self.grid = grid
         self.stop = True
+        self.columns = columns
+        self.rows = rows
 
     def draw_shape(self):
         i = j = k = count = 0
@@ -23,9 +26,6 @@ class Piece(object):
         nr = self.rotation
         if nr >= 4:
             nr = self.rotation = 0
-
-        if self.shape == shapes.S2:
-            self.column = 5
 
         # nr - position, j - row, k - column, i - index of column_row
         # print(current_piece.shape)
@@ -94,8 +94,22 @@ class Piece(object):
                 self.row = 0
                 self.color = shapes.shape_colors[random.randint(0, 6)]
                 self.shape = random.choice(shapes.shapes)
+                if self.shape == shapes.S2:
+                    self.column += 1
 
             #for x in range(0, len(grid.grid_colors)):
                 #for y in range(0, len(grid.grid_colors[0])):
                     #print(grid.grid_colors[x][y])
         return end
+
+    def check_full_line(self):
+        count = 0
+        g_score = score.Score(0)
+
+        for i in range(self.rows):
+            for j in range(self.columns):
+                if self.grid.grid_colors[i][j] != self.grid.main_color:
+                    count += 1
+            if count == self.columns:
+                g_score.game_score += g_score.points
+            count = 0
