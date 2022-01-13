@@ -2,6 +2,7 @@ import shapes
 import random
 import pygame
 import grid
+
 class Piece(object):
     def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid):
         self.column = column
@@ -14,21 +15,36 @@ class Piece(object):
         self.rotation = 0
         self.column_row = [(1,1),(1,1),(1,1),(1,1)]
         self.grid = grid
+        self.stop = True
 
     def draw_shape(self):
-        i = j = k = 0
+        i = j = k = count = 0
+        s_row = s_column = 4
         nr = self.rotation
         if nr >= 4:
             nr = self.rotation = 0
 
+        if self.shape == shapes.S2:
+            self.column = 5
+
         # nr - position, j - row, k - column, i - index of column_row
         # print(current_piece.shape)
         x = self.shape
-        while j < 4:
-            while k < 4:
+
+        # check if the first row is empty
+        for a in range(s_column):
+            if x[nr][0][a] == '0':
+                count += 1
+
+        if count == 4:
+            j = 1
+
+        while j < s_row:
+            while k < s_column:
                 if x[nr][j][k] == '1':
-                    pygame.draw.rect(self.screen, self.color, [self.line_thickness + ((self.column + k) * self.block_side), self.line_thickness + ((self.row + j) * self.block_side), self.block_side, self.block_side], 0)
-                    # rectangle = Rect(self.line_thickness + ((self.column + k) * self.block_side), self.line_thickness + ((self.row + j) * self.block_side), self.block_side, self.block_side)
+                    pygame.draw.rect(self.screen, self.color, [self.line_thickness + ((self.column + k) * self.block_side),
+                                                               self.line_thickness + ((self.row + j) * self.block_side),
+                                                               self.block_side, self.block_side], 0)
                     self.column_row[i] = self.column + k, self.row + j
                     i += 1
                 k += 1
@@ -64,7 +80,7 @@ class Piece(object):
             if x[1] >= 19:
                 end = False
             elif x[1] == 0 and self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
-                print("KONIEC") #tu dodać koniec gry
+                self.stop = False
             else:
                 if self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
                     end = False

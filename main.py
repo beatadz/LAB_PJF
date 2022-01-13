@@ -1,24 +1,19 @@
 import pygame
 from pygame.locals import *
 import shapes
-from piece import Piece
-from piece import random
+import piece
 import grid
+import random
 
 pygame.init()
 screen_height = 810
 screen_width = 750
-
 board_height = 810
 board_width = 520
-
 block_side = 40
-
 columns = 13
 rows = 20
-
 line_thickness = 5
-
 clock = pygame.time.Clock()
 FPS = 60
 speed = 3000
@@ -27,12 +22,7 @@ rotation_speed = 10
 rotation_counter = 0
 move_counter = 0
 
-left = right = top = bottom = stop = 0
-
 rectangles = []
-
-def random_shape():
-    return random.choice(shapes.shapes)
 
 def draw_frame():
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
@@ -49,7 +39,7 @@ pygame.display.set_icon(icon)
 #Tu kiedyś dodam logo i guziki
 
 grid1 = grid.Grid(columns, rows, screen, line_thickness, block_side)
-current_piece = Piece(4, 0, random_shape(), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, 6)], grid1)
+current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, 6)], grid1)
 
 #next_piece = get_tetris_shape()
 falling = clock.tick(FPS)
@@ -66,20 +56,19 @@ while running:
     falling += clock.tick(FPS)
     rotation_counter += 1
     move_counter += 1
+    is_down = False
 
     grid1.draw_grid()
     draw_frame()
     current_piece.draw_shape()
 
+    #ESC OR GAME OVER
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    if falling / speed > 0.1:
-        current_piece.row += 1
-        #print(current_piece.column, current_piece.row)
-        #print(current_piece.check_left(), current_piece.check_right())
-        falling = 0
+    if current_piece.stop is False:
+        running = False
 
     c_right = current_piece.check_right()
     c_left = current_piece.check_left()
@@ -90,6 +79,7 @@ while running:
             current_piece.rotation += 1
             rotation_counter = 0
     if key[pygame.K_DOWN]:
+        is_down = True
         if move_counter > move_speed and c_bottom is True:
             current_piece.row += 1
             move_counter = 0
@@ -101,6 +91,12 @@ while running:
         if move_counter > move_speed and c_left is True:
             current_piece.column -= 1
             move_counter = 0
+
+    if falling / speed > 0.1 and is_down is False:
+        current_piece.row += 1
+        #print(current_piece.column, current_piece.row)
+        #print(current_piece.check_left(), current_piece.check_right())
+        falling = 0
 
     pygame.display.update()
     clock.tick(FPS)
