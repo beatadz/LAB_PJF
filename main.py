@@ -3,7 +3,7 @@ from pygame.locals import *
 from shapes import *
 from piece import Piece
 from piece import random
-from grid import *
+import grid
 
 pygame.init()
 screen_height = 810
@@ -36,18 +36,6 @@ def random_shape():
 
 def draw_frame():
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
-
-def list_for_grid(grid):
-    for i in range(0,columns):
-        for j in range(0, rows):
-            c_r = i, j
-            grid.column_row.append(c_r)
-            #print(grid.column_row)
-
-def draw_grid(grid):
-    for i in range(0,columns):
-        for j in range(0, rows):
-            pygame.draw.rect(screen, grid.color, [line_thickness + (i * block_side), line_thickness + (j * block_side), block_side, block_side], 1)
 
 
 def draw_shape(current_piece):
@@ -105,14 +93,14 @@ pygame.display.set_icon(icon)
 #Tu kiedyś dodam logo i guziki
 
 current_piece = Piece(4, 0, random_shape())
-grid = Grid()
+grid1 = grid.Grid(columns, rows, screen, line_thickness, block_side)
 #next_piece = get_tetris_shape()
 falling = clock.tick(FPS)
 
 screen.fill((192, 192, 192)) # change background color
 running = True
 
-list_for_grid(grid)
+grid1.list_for_grid()
 
 # Game Loop
 while running:
@@ -122,7 +110,7 @@ while running:
     rotation_counter += 1
     move_counter += 1
 
-    draw_grid(grid)
+    grid1.draw_grid()
     draw_frame()
     draw_shape(current_piece)
 
