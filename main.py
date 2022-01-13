@@ -1,8 +1,9 @@
 import pygame
 from pygame.locals import *
 from shapes import *
-from Piece import Piece
-from Piece import random
+from piece import Piece
+from piece import random
+from grid import *
 
 pygame.init()
 screen_height = 810
@@ -21,7 +22,10 @@ line_thickness = 5
 clock = pygame.time.Clock()
 FPS = 60
 speed = 3000
-move_speed = 1000
+move_speed = 2
+rotation_speed = 10
+rotation_counter = 0
+move_counter = 0
 
 left = right = top = bottom = stop = 0
 
@@ -33,19 +37,25 @@ def random_shape():
 def draw_frame():
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
-def draw_grid():
+def list_for_grid(grid):
     for i in range(0,columns):
         for j in range(0, rows):
-            pygame.draw.rect(screen, [255,255,255], [line_thickness + (i * block_side), line_thickness + (j * block_side), block_side, block_side], 1)
-            rect = Rect(line_thickness + (i * block_side), line_thickness + (j * block_side), block_side, block_side)
-            #rectangles.append((i * block_side, j * block_side))
-            rectangles.append(rect)
+            c_r = i, j
+            grid.column_row.append(c_r)
+            #print(grid.column_row)
 
-def get_tetris_shape():
-    return Piece(4, 0, random_shape())
+def draw_grid(grid):
+    for i in range(0,columns):
+        for j in range(0, rows):
+            pygame.draw.rect(screen, grid.color, [line_thickness + (i * block_side), line_thickness + (j * block_side), block_side, block_side], 1)
 
-def draw_shape(current_piece, nr):
+
+def draw_shape(current_piece):
     i = j = k = 0
+    nr = current_piece.rotation
+    if nr >= 4:
+        nr = current_piece.rotation = 0
+
     # nr - position, j - row, k - column, i - index of column_row
     #print(current_piece.shape)
     x = current_piece.shape
@@ -77,6 +87,13 @@ def check_left(current_piece):
             end = False
     return end
 
+def check_bottom(current_piece):
+    end = True
+    for x in current_piece.column_row:
+        if x[1] >= 19:
+            end = False
+    return end
+
 # Create the screen
 screen = pygame.display.set_mode((screen_width, screen_height), pygame.SRCALPHA)
 # Title and icon
@@ -87,22 +104,27 @@ pygame.display.set_icon(icon)
 #Load images
 #Tu kiedyś dodam logo i guziki
 
-current_piece = get_tetris_shape()
-next_piece = get_tetris_shape()
+current_piece = Piece(4, 0, random_shape())
+grid = Grid()
+#next_piece = get_tetris_shape()
 falling = clock.tick(FPS)
 
 screen.fill((192, 192, 192)) # change background color
 running = True
+
+list_for_grid(grid)
 
 # Game Loop
 while running:
     key = pygame.key.get_pressed()
     screen.fill((192, 192, 192))
     falling += clock.tick(FPS)
+    rotation_counter += 1
+    move_counter += 1
 
-    draw_grid()
+    draw_grid(grid)
     draw_frame()
-    draw_shape(current_piece, 0)
+    draw_shape(current_piece)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -116,19 +138,24 @@ while running:
 
     c_right = check_right(current_piece)
     c_left = check_left(current_piece)
+    c_bottom = check_bottom(current_piece)
 
     if key[pygame.K_SPACE]:
-        current_piece.rotation += 1
+        if rotation_counter > rotation_speed:
+            current_piece.rotation += 1
+            rotation_counter = 0
     if key[pygame.K_DOWN]:
-        if bottom == 0:
+        if move_counter > move_speed and c_bottom is True:
             current_piece.row += 1
+            move_counter = 0
     elif key[pygame.K_RIGHT]:
-        if right == 0 and c_right is True:
+        if move_counter > move_speed and c_right is True:
             current_piece.column += 1
+            move_counter = 0
     elif key[pygame.K_LEFT]:
-        if left == 0 and c_left is True:
+        if move_counter > move_speed and c_left is True:
             current_piece.column -= 1
-
+            move_counter = 0
 
     pygame.display.update()
     clock.tick(FPS)
