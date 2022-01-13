@@ -77,8 +77,8 @@ while running:
 
     if falling / speed > 0.1:
         current_piece.row += 1
-        print(current_piece.column, current_piece.row)
-        print(current_piece.check_left(), current_piece.check_right())
+        #print(current_piece.column, current_piece.row)
+        #print(current_piece.check_left(), current_piece.check_right())
         falling = 0
 
     c_right = current_piece.check_right()

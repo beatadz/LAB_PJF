@@ -41,6 +41,9 @@ class Piece(object):
         for x in self.column_row:
             if x[0] >= 12:
                 end = False
+            else:
+                if self.grid.grid_colors[x[1]][x[0] + 1] != self.grid.main_color:
+                    end = False
         return end
 
     def check_left(self):
@@ -48,19 +51,29 @@ class Piece(object):
         for x in self.column_row:
             if x[0] <= 0:
                 end = False
+            else:
+                if self.grid.grid_colors[x[1]][x[0] - 1] != self.grid.main_color:
+                    end = False
         return end
 
     def check_bottom(self):
         c = self.color
         end = True
+
         for x in self.column_row:
             if x[1] >= 19:
                 end = False
+            elif x[1] == 0 and self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
+                print("KONIEC") #tu dodać koniec gry
+            else:
+                if self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
+                    end = False
+
         if end is False:
-            print(self.column_row)
+            #print(self.column_row)
             for x in self.column_row:
                 self.grid.grid_colors[x[1]][x[0]] = c
-                print(x[1], x[0])
+                #print(x[1], x[0])
                 self.column = 4
                 self.row = 0
                 self.color = shapes.shape_colors[random.randint(0, 6)]
