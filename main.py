@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from shapes import *
+import shapes
 from piece import Piece
 from piece import random
 import grid
@@ -32,55 +32,11 @@ left = right = top = bottom = stop = 0
 rectangles = []
 
 def random_shape():
-    return random.choice(shapes)
+    return random.choice(shapes.shapes)
 
 def draw_frame():
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
-
-def draw_shape(current_piece):
-    i = j = k = 0
-    nr = current_piece.rotation
-    if nr >= 4:
-        nr = current_piece.rotation = 0
-
-    # nr - position, j - row, k - column, i - index of column_row
-    #print(current_piece.shape)
-    x = current_piece.shape
-    while j < 4:
-        while k < 4:
-            if x[nr][j][k] == '1':
-                pygame.draw.rect(screen, current_piece.color, [line_thickness + ((current_piece.column + k) * block_side), line_thickness + ((current_piece.row + j) * block_side), block_side, block_side], 0)
-                #rectangle = Rect(line_thick + ((current_piece.column + k) * block_side),line_thick + ((current_piece.row + j) * block_side), block_side, block_side)
-                point = line_thickness + ((current_piece.column + k) * block_side), line_thickness + ((current_piece.row + j) * block_side)
-                current_piece.positions_list.append(point)
-                current_piece.column_row[i] = current_piece.column + k, current_piece.row + j
-                i += 1
-            k += 1
-        j += 1
-        k = 0
-        #print("\n")
-
-def check_right(current_piece):
-    end = True
-    for x in current_piece.column_row:
-        if x[0] >= 12:
-            end = False
-    return end
-
-def check_left(current_piece):
-    end = True
-    for x in current_piece.column_row:
-        if x[0] <= 0:
-            end = False
-    return end
-
-def check_bottom(current_piece):
-    end = True
-    for x in current_piece.column_row:
-        if x[1] >= 19:
-            end = False
-    return end
 
 # Create the screen
 screen = pygame.display.set_mode((screen_width, screen_height), pygame.SRCALPHA)
@@ -92,8 +48,9 @@ pygame.display.set_icon(icon)
 #Load images
 #Tu kiedyś dodam logo i guziki
 
-current_piece = Piece(4, 0, random_shape())
 grid1 = grid.Grid(columns, rows, screen, line_thickness, block_side)
+current_piece = Piece(4, 0, random_shape(), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, 6)], grid1)
+
 #next_piece = get_tetris_shape()
 falling = clock.tick(FPS)
 
@@ -112,7 +69,7 @@ while running:
 
     grid1.draw_grid()
     draw_frame()
-    draw_shape(current_piece)
+    current_piece.draw_shape()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -121,12 +78,12 @@ while running:
     if falling / speed > 0.1:
         current_piece.row += 1
         print(current_piece.column, current_piece.row)
-        print(check_left(current_piece), check_right(current_piece))
+        print(current_piece.check_left(), current_piece.check_right())
         falling = 0
 
-    c_right = check_right(current_piece)
-    c_left = check_left(current_piece)
-    c_bottom = check_bottom(current_piece)
+    c_right = current_piece.check_right()
+    c_left = current_piece.check_left()
+    c_bottom = current_piece.check_bottom()
 
     if key[pygame.K_SPACE]:
         if rotation_counter > rotation_speed:
