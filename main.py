@@ -5,6 +5,7 @@ import piece
 import grid
 import random
 import score
+import title_screen
 
 pygame.init()
 screen_height = 810
@@ -45,10 +46,12 @@ current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_si
 if current_piece.shape == shapes.S2:
     current_piece.column += 1
 
-#next_piece = get_tetris_shape()
 falling = clock.tick(FPS)
 
-screen.fill((192, 192, 192)) # change background color
+#tu zrobić początek gry z logo
+title_screen.make_title_screen(screen_width, screen_height, screen)
+
+#screen.fill((192, 192, 192)) # change background color
 running = True
 
 grid1.list_for_grid()

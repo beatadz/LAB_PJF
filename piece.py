@@ -120,8 +120,6 @@ class Piece(object):
         self.empty = empty
 
     def fix_empty_lines(self):
-        if self.empty:
-            print(self.empty)
         for empty_row in self.empty:
             r = empty_row
             while r >= 1:
