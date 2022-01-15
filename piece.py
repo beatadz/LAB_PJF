@@ -20,6 +20,7 @@ class Piece(object):
         self.columns = columns
         self.rows = rows
         self.g_score = g_score
+        self.empty = []
 
     def draw_shape(self):
         i = j = k = count = 0
@@ -95,7 +96,7 @@ class Piece(object):
                 self.row = 0
                 self.color = shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)]
                 self.shape = random.choice(shapes.shapes)
-                #self.shape = shapes.shapes[0]
+                #self.shape = shapes.shapes[0] # - do testów
                 if self.shape == shapes.S2:
                     self.column += 1
 
@@ -103,14 +104,29 @@ class Piece(object):
 
     def check_full_line(self):
         count = 0
+        empty = []
 
         for i in range(self.rows):
             for j in range(self.columns):
                 if self.grid.grid_colors[i][j] != self.grid.main_color:
                     count += 1
             if count == self.columns:
+                empty.append(i)
                 self.g_score.game_score += self.g_score.points
                 for k in range(self.columns):
                     self.grid.grid_colors[i][k] = self.grid.main_color
 
             count = 0
+        self.empty = empty
+
+    def fix_empty_lines(self):
+        if self.empty:
+            print(self.empty)
+        for empty_row in self.empty:
+            r = empty_row
+            while r >= 1:
+                print(r)
+                for c in range(self.columns):
+                    if self.grid.grid_colors[r][c] != self.grid.main_color or r == empty_row:
+                        self.grid.grid_colors[r][c] = self.grid.grid_colors[r-1][c]
+                r -= 1

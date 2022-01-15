@@ -79,6 +79,7 @@ while running:
     c_left = current_piece.check_left()
     c_bottom = current_piece.check_bottom()
     current_piece.check_full_line()
+    current_piece.fix_empty_lines()
 
     if key[pygame.K_SPACE]:
         if rotation_counter > rotation_speed:
