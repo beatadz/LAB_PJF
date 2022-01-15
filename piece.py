@@ -1,8 +1,6 @@
 import shapes
 import random
 import pygame
-import grid
-import score
 
 class Piece(object):
     def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid, columns, rows, g_score):
@@ -15,6 +13,7 @@ class Piece(object):
         self.color = color
         self.rotation = 0
         self.column_row = [(1,1),(1,1),(1,1),(1,1)]
+        self.next_column_row = [(1, 1), (1, 1), (1, 1), (1, 1)]
         self.grid = grid
         self.stop = True
         self.columns = columns
@@ -40,7 +39,7 @@ class Piece(object):
 
         if count == 4:
             j = 1
-
+        # ACTUAL SHAPE
         while j < s_row:
             while k < s_column:
                 if x[nr][j][k] == '1':
@@ -48,11 +47,28 @@ class Piece(object):
                                                                self.line_thickness + ((self.row + j) * self.block_side),
                                                                self.block_side, self.block_side], 0)
                     self.column_row[i] = self.column + k, self.row + j
+
                     i += 1
                 k += 1
             j += 1
             k = 0
-            # print("\n")
+
+        j = k = i = 0
+
+        # NEXT SHAPE
+        while j < s_row:
+            while k < s_column:
+                if nr < 3:
+                    if x[nr + 1][j][k] == '1':
+                        self.next_column_row[i] = self.column + k, self.row + j
+                        i += 1
+                else:
+                    if x[0][j][k] == '1':
+                        self.next_column_row[i] = self.column + k, self.row + j
+                        i += 1
+                k += 1
+            j += 1
+            k = 0
 
     def check_right(self):
         end = True
@@ -102,6 +118,21 @@ class Piece(object):
 
         return end
 
+    def check_rotation(self):
+        end = True
+        #print(self.next_column_row)
+        for x in self.next_column_row:
+            if x[0] >= self.columns:
+                end = False
+            elif x[0] < 0:
+                end = False
+
+            if x[1] >= self.rows:
+                end = False
+            elif x[1] < 0 :
+                end = False
+        return end
+
     def check_full_line(self):
         count = 0
         empty = []
@@ -123,7 +154,7 @@ class Piece(object):
         for empty_row in self.empty:
             r = empty_row
             while r >= 1:
-                print(r)
+                #print(r)
                 for c in range(self.columns):
                     if self.grid.grid_colors[r][c] != self.grid.main_color or r == empty_row:
                         self.grid.grid_colors[r][c] = self.grid.grid_colors[r-1][c]
