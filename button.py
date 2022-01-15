@@ -13,9 +13,19 @@ class Button(object):
         self.image = pygame.transform.scale(image, (int(self.width * self.scale), int(self.height * scale)))
         self.clicked = False
         self.screen = screen
-        self.rect = self.image.get_rect()
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def create_button(self):
+
+        # draw button on screen
+        self.screen.blit(self.image, (self.x, self.y))
+        # add text
+        font = pygame.font.SysFont(self.font, self.text_size)
+        button_text = font.render(self.text, True, self.text_color)
+        text_width, text_height = font.size(self.text)
+        self.screen.blit(button_text, (self.x + self.width/2 - text_width/2, self.y + self.height/2 - text_height/2))
+
+    def click_check(self):
         action = False
         # get mouse position
         pos = pygame.mouse.get_pos()
@@ -29,15 +39,4 @@ class Button(object):
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
-        # draw button on screen
-        self.screen.blit(self.image, (self.rect.x, self.rect.y))
-
-        # add text
-        font = pygame.font.SysFont(self.font, self.text_size)
-        button_text = font.render(self.text, True, self.text_color)
-        text_width, text_height = font.size(self.text)
-        self.screen.blit(button_text, (self.x + self.width/2 - text_width/2, self.y + self.height/2 - text_height/2))
-
         return action
-
-
