@@ -21,6 +21,25 @@ def game_loop(screen, grid1, current_piece, score_, board_width, board_height, l
     falling = clock.tick(FPS)
     clicked = False
 
+    background_image = pygame.image.load("resources/background.png")
+
+    start_button_image = pygame.image.load("resources/blue_button.png")
+    start_button_width, start_button_height = start_button_image.get_size()
+
+    creator_button_image = pygame.image.load("resources/pink_button.png")
+    creator_button_width, kreator_button_height = creator_button_image.get_size()
+
+    options_button_image = pygame.image.load("resources/yellow_button.png")
+    options_button_width, options_button_height = options_button_image.get_size()
+
+    about_button_image = pygame.image.load("resources/green_button.png")
+    about_button_width, about_button_height = about_button_image.get_size()
+
+    quit_button_image = pygame.image.load("resources/purple_button.png")
+    quit_button_width, quit_button_height = quit_button_image.get_size()
+
+    gap = 80
+
     # Game Loop
     while running:
         key = pygame.key.get_pressed()
@@ -35,25 +54,6 @@ def game_loop(screen, grid1, current_piece, score_, board_width, board_height, l
             if event.type == pygame.QUIT:
                 running = False
 
-        background_image = pygame.image.load("resources/background.png")
-
-        start_button_image = pygame.image.load("resources/blue_button.png")
-        start_button_width, start_button_height = start_button_image.get_size()
-
-        creator_button_image = pygame.image.load("resources/pink_button.png")
-        creator_button_width, kreator_button_height = creator_button_image.get_size()
-
-        options_button_image = pygame.image.load("resources/yellow_button.png")
-        options_button_width, options_button_height = options_button_image.get_size()
-
-        about_button_image = pygame.image.load("resources/green_button.png")
-        about_button_width, about_button_height = about_button_image.get_size()
-
-        quit_button_image = pygame.image.load("resources/purple_button.png")
-        quit_button_width, quit_button_height = quit_button_image.get_size()
-
-        gap = 80
-
         start_button = button.Button("START", (
             screen_width / 2 - start_button_width / 2, screen_height / 2 - start_button_height / 2 - gap), "arial",
                                      (0, 0, 0), 23, start_button_image, 1, screen)
@@ -63,7 +63,7 @@ def game_loop(screen, grid1, current_piece, score_, board_width, board_height, l
         options_button = button.Button("OPTIONS", (
             screen_width / 2 - options_button_width / 2, screen_height / 2 - options_button_height / 2 + gap), "arial",
                                        (0, 0, 0), 23, options_button_image, 1, screen)
-        about_button = button.Button("QUIT", (
+        about_button = button.Button("ABOUT", (
             screen_width / 2 - about_button_width / 2, screen_height / 2 - about_button_height / 2 + 2 * gap), "arial",
                                     (0, 0, 0), 23, about_button_image, 1, screen)
         quit_button = button.Button("QUIT", (
@@ -89,14 +89,16 @@ def game_loop(screen, grid1, current_piece, score_, board_width, board_height, l
             if about_button.click_check() is True:
                 print("ABOUT")
             if quit_button.click_check() is True:
-                print("QUIT")
+                running = False
         else:
             clicked = True
-            grid1.draw_grid()
-            draw_frame(screen, board_width, board_height, line_thickness)
-            current_piece.draw_shape()
-            score_.display_score()
+            screen.fill((192, 192, 192))  # change background color
+            grid1.draw_grid() # draw grid
+            draw_frame(screen, board_width, board_height, line_thickness) # draw frame
+            current_piece.draw_shape() # draw first shape
+            score_.display_score() # display game score
 
+            # check stop condition
             if current_piece.stop is False:
                 running = False
 
@@ -104,24 +106,26 @@ def game_loop(screen, grid1, current_piece, score_, board_width, board_height, l
             c_left = current_piece.check_left()
             c_bottom = current_piece.check_bottom()
 
+            # check if there is any full or empty line
             current_piece.check_full_line()
             current_piece.fix_empty_lines()
 
-            if key[pygame.K_SPACE]:
+            # KEYBOARD
+            if key[pygame.K_UP] or key[pygame.K_w]:
                 if rotation_counter > rotation_speed and current_piece.check_rotation() is True:
                     current_piece.rotation += 1
                     rotation_counter = 0
 
-            if key[pygame.K_DOWN]:
+            if key[pygame.K_DOWN] or key[pygame.K_s]:
                 is_down = True
                 if move_counter > move_speed and c_bottom is True:
                     current_piece.row += 1
                     move_counter = 0
-            elif key[pygame.K_RIGHT]:
+            elif key[pygame.K_RIGHT] or key[pygame.K_d]:
                 if move_counter > move_speed and c_right is True:
                     current_piece.column += 1
                     move_counter = 0
-            elif key[pygame.K_LEFT]:
+            elif key[pygame.K_LEFT] or key[pygame.K_a]:
                 if move_counter > move_speed and c_left is True:
                     current_piece.column -= 1
                     move_counter = 0
@@ -162,11 +166,6 @@ def init_game():
 
     if current_piece.shape == shapes.S2:
         current_piece.column += 1
-
-    # tu zrobić początek gry z logo
-    #
-
-    screen.fill((192, 192, 192)) # change background color
 
     grid_.list_for_grid()
 
