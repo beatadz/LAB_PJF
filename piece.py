@@ -5,7 +5,7 @@ import grid
 import score
 
 class Piece(object):
-    def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid, columns, rows):
+    def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid, columns, rows, g_score):
         self.column = column
         self.row = row
         self.shape = shape
@@ -19,6 +19,7 @@ class Piece(object):
         self.stop = True
         self.columns = columns
         self.rows = rows
+        self.g_score = g_score
 
     def draw_shape(self):
         i = j = k = count = 0
@@ -92,24 +93,24 @@ class Piece(object):
                 #print(x[1], x[0])
                 self.column = 4
                 self.row = 0
-                self.color = shapes.shape_colors[random.randint(0, 6)]
+                self.color = shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)]
                 self.shape = random.choice(shapes.shapes)
+                #self.shape = shapes.shapes[0]
                 if self.shape == shapes.S2:
                     self.column += 1
 
-            #for x in range(0, len(grid.grid_colors)):
-                #for y in range(0, len(grid.grid_colors[0])):
-                    #print(grid.grid_colors[x][y])
         return end
 
     def check_full_line(self):
         count = 0
-        g_score = score.Score(0)
 
         for i in range(self.rows):
             for j in range(self.columns):
                 if self.grid.grid_colors[i][j] != self.grid.main_color:
                     count += 1
             if count == self.columns:
-                g_score.game_score += g_score.points
+                self.g_score.game_score += self.g_score.points
+                for k in range(self.columns):
+                    self.grid.grid_colors[i][k] = self.grid.main_color
+
             count = 0

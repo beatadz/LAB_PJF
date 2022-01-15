@@ -4,6 +4,7 @@ import shapes
 import piece
 import grid
 import random
+import score
 
 pygame.init()
 screen_height = 810
@@ -27,7 +28,6 @@ rectangles = []
 def draw_frame():
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
-
 # Create the screen
 screen = pygame.display.set_mode((screen_width, screen_height), pygame.SRCALPHA)
 # Title and icon
@@ -39,7 +39,8 @@ pygame.display.set_icon(icon)
 #Tu kiedyś dodam logo i guziki
 
 grid1 = grid.Grid(columns, rows, screen, line_thickness, block_side)
-current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, 6)], grid1, columns, rows)
+score = score.Score(0, screen, board_height, board_width)
+current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_side, line_thickness,shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)], grid1, columns, rows, score)
 
 if current_piece.shape == shapes.S2:
     current_piece.column += 1
@@ -64,6 +65,7 @@ while running:
     grid1.draw_grid()
     draw_frame()
     current_piece.draw_shape()
+    score.display_score()
 
     #ESC OR GAME OVER
     for event in pygame.event.get():
@@ -100,7 +102,7 @@ while running:
     if falling / speed > 0.1 and is_down is False:
         current_piece.row += 1
         #print(current_piece.column, current_piece.row)
-        print(current_piece.check_left(), current_piece.check_right())
+        #print(current_piece.check_left(), current_piece.check_right())
         falling = 0
 
     pygame.display.update()
