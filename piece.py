@@ -3,7 +3,7 @@ import random
 import pygame
 
 class Piece(object):
-    def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid, columns, rows, g_score):
+    def __init__(self, column, row, shape, screen, block_side, line_thickness, color, grid, columns, rows, g_score, screen_width, screen_height, board_width, board_height):
         self.column = column
         self.row = row
         self.shape = shape
@@ -20,6 +20,13 @@ class Piece(object):
         self.rows = rows
         self.g_score = g_score
         self.empty = []
+        self.next_color = shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)]
+        self.next_shape = random.choice(shapes.shapes)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.board_width = board_width
+        self.board_height = board_height
+        self.checked = 0
 
     def draw_shape(self):
         i = j = k = count = 0
@@ -27,6 +34,11 @@ class Piece(object):
         nr = self.rotation
         if nr >= 4:
             nr = self.rotation = 0
+
+        if self.checked == 0:
+            self.next_color = shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)]
+            self.next_shape = random.choice(shapes.shapes)
+            self.checked = 1
 
         # nr - position, j - row, k - column, i - index of column_row
         # print(current_piece.shape)
@@ -104,14 +116,16 @@ class Piece(object):
                     end = False
 
         if end is False:
+            self.checked = 0
             #print(self.column_row)
             for x in self.column_row:
                 self.grid.grid_colors[x[1]][x[0]] = c
                 #print(x[1], x[0])
                 self.column = 4
                 self.row = 0
-                self.color = shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)]
-                self.shape = random.choice(shapes.shapes)
+                self.color = self.next_color
+                self.shape = self.next_shape
+
                 #self.shape = shapes.shapes[0] # - do testów
                 if self.shape == shapes.S2:
                     self.column += 1
@@ -159,3 +173,23 @@ class Piece(object):
                     if self.grid.grid_colors[r][c] != self.grid.main_color or r == empty_row:
                         self.grid.grid_colors[r][c] = self.grid.grid_colors[r-1][c]
                 r -= 1
+
+    def draw_next_shape(self):
+        start_drawing = self.board_width + self.line_thickness + 30
+        i = j = k = 0
+        s_row = s_column = 4
+        # nr - position, j - row, k - column, i - index of column_row
+        # print(current_piece.shape)
+        x = self.next_shape
+        # ACTUAL SHAPE
+        while j < s_row:
+            while k < s_column:
+                if x[0][j][k] == '1':
+                    pygame.draw.rect(self.screen, self.next_color,
+                                     [self.line_thickness + (k * self.block_side) + start_drawing,
+                                      self.line_thickness + (j * self.block_side) + 200,
+                                      self.block_side, self.block_side], 0)
+                    i += 1
+                k += 1
+            j += 1
+            k = 0

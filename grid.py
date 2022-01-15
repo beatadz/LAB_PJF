@@ -3,7 +3,7 @@ import pygame
 #one_row = []
 
 class Grid(object):
-    def __init__(self, columns, rows, screen, line_thickness, block_side):
+    def __init__(self, columns, rows, screen, line_thickness, block_side, board_width):
         self.columns = columns
         self.rows = rows
         self.screen = screen
@@ -12,6 +12,7 @@ class Grid(object):
         self.main_color = (255,255,255)
         self.column_row = []
         self.grid_colors = []
+        self.board_width = board_width
 
     def list_for_grid(self):
         for i in range(0, self.columns):
@@ -34,3 +35,10 @@ class Grid(object):
                     pygame.draw.rect(self.screen, self.grid_colors[j][i], [self.line_thickness + (i * self.block_side),
                                                                       self.line_thickness + (j * self.block_side),
                                                                       self.block_side, self.block_side], 0)
+    def draw_small_grid(self):
+        start_drawing = self.board_width + self.line_thickness + 30
+        for i in range(0, 4):
+            for j in range(0, 4):
+                pygame.draw.rect(self.screen, self.grid_colors[j][i], [self.line_thickness + (i * self.block_side) + start_drawing,
+                                                                  self.line_thickness + (j * self.block_side) + 200,
+                                                                  self.block_side, self.block_side], 1)

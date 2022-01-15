@@ -9,7 +9,7 @@ import button
 def draw_frame(screen, board_width, board_height, line_thickness):
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
-def game_loop(screen, grid1, current_piece, score_, board_width, board_height, line_thickness, screen_width, screen_height):
+def game_loop(screen, grid_, current_piece, score_, board_width, board_height, line_thickness, screen_width, screen_height):
     clock = pygame.time.Clock()
     FPS = 60
     speed = 3000
@@ -93,10 +93,13 @@ def game_loop(screen, grid1, current_piece, score_, board_width, board_height, l
         else:
             clicked = True
             screen.fill((192, 192, 192))  # change background color
-            grid1.draw_grid() # draw grid
+            grid_.draw_grid() # draw grid
+            grid_.draw_small_grid()
             draw_frame(screen, board_width, board_height, line_thickness) # draw frame
             current_piece.draw_shape() # draw first shape
+            current_piece.draw_next_shape()
             score_.display_score() # display game score
+            shapes.display_next(screen, board_width) # display "next"
 
             # check stop condition
             if current_piece.stop is False:
@@ -158,11 +161,11 @@ def init_game():
     icon = pygame.image.load("resources/TetrisIcon.png")
     pygame.display.set_icon(icon)
 
-    grid_ = grid.Grid(columns, rows, screen, line_thickness, block_side)
+    grid_ = grid.Grid(columns, rows, screen, line_thickness, block_side, board_width)
     score_ = score.Score(0, screen, board_height, board_width)
     current_piece = piece.Piece(4, 0, random.choice(shapes.shapes), screen, block_side, line_thickness,
                                 shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)], grid_, columns,
-                                rows, score_)
+                                rows, score_, screen_width, screen_height, board_width, board_height)
 
     if current_piece.shape == shapes.S2:
         current_piece.column += 1
