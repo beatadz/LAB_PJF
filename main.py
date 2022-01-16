@@ -19,7 +19,10 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     move_counter = 0
     running = True
     falling = clock.tick(FPS)
-    clicked = False
+    start_clicked = False
+    creator_clicked = False
+    options_clicked = False
+    about_clicked = False
 
     background_image = pygame.image.load("resources/background.png")
 
@@ -70,28 +73,58 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             screen_width / 2 - quit_button_width / 2, screen_height / 2 - quit_button_height / 2 + 3 * gap), "arial",
                                        (0, 0, 0), 23, quit_button_image, 1, screen)
 
-        if start_button.click_check() is False and clicked is not True:
-            tetris_title = pygame.image.load("resources/Tetris.png")
-            tetris_title = pygame.transform.scale(tetris_title, (screen_width - 200, 131))
-            screen.fill((192, 192, 192))
-            screen.blit(tetris_title, (screen_width / 2 - ((screen_width - 200) / 2), 100))
-            screen.blit(background_image, (0, 0))
-            start_button.create_button()
-            creator_button.create_button()
-            options_button.create_button()
-            about_button.create_button()
-            quit_button.create_button()
+        if key[pygame.K_SPACE]: # chwilowo
+            start_clicked = True
 
-            if creator_button.click_check() is True:
-                print("SHAPE CREATOR")
-            if options_button.click_check() is True:
-                print("OPTIONS")
-            if about_button.click_check() is True:
-                print("ABOUT")
-            if quit_button.click_check() is True:
-                running = False
-        else:
-            clicked = True
+        tetris_title = pygame.image.load("resources/Tetris.png")
+        tetris_title = pygame.transform.scale(tetris_title, (screen_width - 200, 131))
+        screen.fill((192, 192, 192))
+        screen.blit(tetris_title, (screen_width / 2 - ((screen_width - 200) / 2), 100))
+        screen.blit(background_image, (0, 0))
+        start_button.create_button()
+        creator_button.create_button()
+        options_button.create_button()
+        about_button.create_button()
+        quit_button.create_button()
+
+        if start_button.click_check() is True:
+            start_clicked = True
+        elif creator_button.click_check() is True:
+            creator_clicked = True
+        elif options_button.click_check() is True:
+            options_clicked = True
+        elif about_button.click_check() is True:
+            about_clicked = True
+        elif quit_button.click_check() is True:
+            running = False
+
+        if start_clicked is False and creator_clicked is True and options_clicked is False and about_clicked is False: # SHAPE CREATOR
+            screen.fill((192, 192, 192))
+            # DRAW - "MAKE YOUR OWN SHAPES"
+            font = pygame.font.SysFont('arial', 60)
+            w2, h2 = font.size("MAKE YOUR OWN SHAPES")
+            w, h = font.size("MAKE")
+            width = w
+            creator_text = font.render("MAKE", True, (30,144,255))
+            screen.blit(creator_text, (screen_width / 2 - w2 / 2, 0))
+            w, h = font.size(" YOUR")
+            creator_text = font.render(" YOUR", True, (255,20,147))
+            screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
+            width += w
+            w, h = font.size(" OWN")
+            creator_text = font.render(" OWN", True, (50,205,50))
+            screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
+            width += w
+            w, h = font.size(" SHAPES")
+            creator_text = font.render(" SHAPES", True, (255,140,0))
+            screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
+
+        elif start_clicked is False and creator_clicked is False and options_clicked is True and about_clicked is False: # OPTIONS
+            screen.fill((192, 192, 192))
+        elif start_clicked is False and creator_clicked is False and options_clicked is False and about_clicked is True: # ABOUT
+            screen.fill((192, 192, 192))
+        elif start_clicked is True: # GAME
+            #start_clicked = True
             screen.fill((192, 192, 192))  # change background color
             grid_.draw_grid() # draw grid
             grid_.draw_small_grid()
