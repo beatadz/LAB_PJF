@@ -6,6 +6,7 @@ import random
 import score
 import button
 import checkbox
+import new_shape
 
 def draw_frame(screen, board_width, board_height, line_thickness):
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
@@ -24,6 +25,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     creator_clicked = False
     options_clicked = False
     about_clicked = False
+    clear_clicked = False
+    save_clicked = False
     boxes = []
     is_visible = [True, True, True, True]
 
@@ -44,7 +47,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
 
     save_button_image = pygame.image.load("resources/green_button.png")
 
-    back_button_image = pygame.image.load("resources/blue_button.png")
+    back_button_image = pygame.image.load("resources/purple_button.png")
 
     gap = 80
 
@@ -73,7 +76,9 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
 
     save_button = button.Button("SAVE", (0.7 * button_width + 75, 380), "arial", (0, 0, 0), 23, save_button_image, 0.7, screen)
 
-    back_button = button.Button("BACK", (130, 710), "arial", (0, 0, 0), 23, back_button_image, 0.7, screen)
+    back_button = button.Button("BACK", (65, 710), "arial", (0, 0, 0), 23, back_button_image, 0.7, screen)
+
+    start2_button = button.Button("START", (75 + 0.7 * button_width, 710), "arial", (0, 0, 0), 23, start_button_image, 0.7, screen)
 
     # Game Loop
     while running:
@@ -161,13 +166,32 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
 
             # draw creator grid
             grid_.draw_creator_grid(selected_color)
-
             # add clear button
             clear_button.create_button()
+            if clear_button.click_check() is True:
+                grid_.clear_creator_grid(boxes)
             # add save button
             save_button.create_button()
+            if save_button.click_check() is True:
+                new = new_shape.NewShape()
+                empty = new.save_shape(grid_)
+                # draw - "SAVED"
+                if empty is False:
+                    font = pygame.font.SysFont('arial', 30)
+                    color_text = font.render("SAVED", True, (0, 0, 0))
+                    screen.blit(color_text, (150, 500))
             # add back button
             back_button.create_button()
+            if back_button.click_check() is True:
+                start_clicked = False
+                creator_clicked = False
+                options_clicked = False
+                about_clicked = False
+            # add start button
+            start2_button.create_button()
+            if start2_button.click_check() is True:
+                creator_clicked = False
+                start_clicked = True
 
         elif start_clicked is False and creator_clicked is False and options_clicked is True and about_clicked is False: # OPTIONS
             is_visible[0] = False

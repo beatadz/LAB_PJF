@@ -1,4 +1,5 @@
 import pygame
+import shapes
 
 class Grid(object):
     def __init__(self, columns, rows, screen, line_thickness, block_side, board_width):
@@ -13,6 +14,7 @@ class Grid(object):
         self.board_width = board_width
         self.select = []
         self.count = 0
+        self.max = 16
 
     def list_for_grid(self):
         for i in range(0, self.columns):
@@ -58,10 +60,21 @@ class Grid(object):
                 pos = pygame.mouse.get_pos()
 
                 # check mouseover and clicked conditions
-                if rect.collidepoint(pos) and self.count < 4:
+                if rect.collidepoint(pos) and self.count < self.max:
                     if pygame.mouse.get_pressed()[0] == 1:
-                        self.count += 1
-                        self.select[j][i] = selected_color
+                        if selected_color != 0 and self.select[j][i] != selected_color:
+                            self.count += 1
+                            self.select[j][i] = selected_color
 
                 #pygame.draw.rect(self.screen, self.main_color, rect, 1)
+
+    def clear_creator_grid(self, checkboxes):
+        for i in range(0, 4):
+            for j in range(0, 4):
+                self.select[j][i] = self.main_color
+
+                self.count = 0
+                for box in checkboxes:
+                    box.checked = False
+
 
