@@ -16,7 +16,8 @@ class Button(object):
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def create_button(self):
-
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
         # draw button on screen
         self.screen.blit(self.image, (self.x, self.y))
         # add text

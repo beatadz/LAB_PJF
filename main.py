@@ -30,19 +30,21 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     background_image = pygame.image.load("resources/background.png")
 
     start_button_image = pygame.image.load("resources/blue_button.png")
-    start_button_width, start_button_height = start_button_image.get_size()
+    button_width, button_height = start_button_image.get_size()
 
     creator_button_image = pygame.image.load("resources/pink_button.png")
-    creator_button_width, kreator_button_height = creator_button_image.get_size()
 
     options_button_image = pygame.image.load("resources/yellow_button.png")
-    options_button_width, options_button_height = options_button_image.get_size()
 
     about_button_image = pygame.image.load("resources/green_button.png")
-    about_button_width, about_button_height = about_button_image.get_size()
 
     quit_button_image = pygame.image.load("resources/purple_button.png")
-    quit_button_width, quit_button_height = quit_button_image.get_size()
+
+    clear_button_image = pygame.image.load("resources/yellow_button.png")
+
+    save_button_image = pygame.image.load("resources/green_button.png")
+
+    back_button_image = pygame.image.load("resources/blue_button.png")
 
     gap = 80
 
@@ -52,6 +54,26 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                                  190 + (i * 50), "arial", shapes.shape_colors[i])
         boxes.append(r_button)
 
+    start_button = button.Button("START", (
+        screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 - gap), "arial",
+                                 (0, 0, 0), 23, start_button_image, 1, screen)
+    creator_button = button.Button("SHAPE CREATOR", (
+        screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2), "arial",
+                                   (0, 0, 0), 23, creator_button_image, 1, screen)
+    options_button = button.Button("OPTIONS", (
+        screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + gap), "arial",
+                                   (0, 0, 0), 23, options_button_image, 1, screen)
+    about_button = button.Button("ABOUT", (
+        screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 2 * gap), "arial",
+                                 (0, 0, 0), 23, about_button_image, 1, screen)
+    quit_button = button.Button("QUIT", (
+        screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 3 * gap), "arial",
+                                (0, 0, 0), 23, quit_button_image, 1, screen)
+    clear_button = button.Button("CLEAR", (65, 380), "arial",(0, 0, 0), 23, clear_button_image, 0.7, screen)
+
+    save_button = button.Button("SAVE", (0.7 * button_width + 75, 380), "arial", (0, 0, 0), 23, save_button_image, 0.7, screen)
+
+    back_button = button.Button("BACK", (130, 710), "arial", (0, 0, 0), 23, back_button_image, 0.7, screen)
 
     # Game Loop
     while running:
@@ -61,27 +83,12 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         rotation_counter += 1
         move_counter += 1
         is_down = False
+        selected_color = 0
 
         # ESC OR GAME OVER
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-        start_button = button.Button("START", (
-            screen_width / 2 - start_button_width / 2, screen_height / 2 - start_button_height / 2 - gap), "arial",
-                                     (0, 0, 0), 23, start_button_image, 1, screen)
-        creator_button = button.Button("SHAPE CREATOR", (
-            screen_width / 2 - creator_button_width / 2, screen_height / 2 - kreator_button_height / 2), "arial",
-                                       (0, 0, 0), 23, creator_button_image, 1, screen)
-        options_button = button.Button("OPTIONS", (
-            screen_width / 2 - options_button_width / 2, screen_height / 2 - options_button_height / 2 + gap), "arial",
-                                       (0, 0, 0), 23, options_button_image, 1, screen)
-        about_button = button.Button("ABOUT", (
-            screen_width / 2 - about_button_width / 2, screen_height / 2 - about_button_height / 2 + 2 * gap), "arial",
-                                    (0, 0, 0), 23, about_button_image, 1, screen)
-        quit_button = button.Button("QUIT", (
-            screen_width / 2 - quit_button_width / 2, screen_height / 2 - quit_button_height / 2 + 3 * gap), "arial",
-                                       (0, 0, 0), 23, quit_button_image, 1, screen)
 
 
         if key[pygame.K_SPACE]: # chwilowo
@@ -132,8 +139,6 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             width += w
             creator_text = font.render(" SHAPES", True, (255,140,0))
             screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
-            # draw grid
-            grid_.draw_creator_grid()
             # draw - "COLOR"
             font = pygame.font.SysFont('arial', 30)
             color_text = font.render("COLOR", True, (0, 0, 0))
@@ -145,12 +150,24 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             for box in boxes:
                 box.render_checkbox()
 
+            # update checkboxes and check if only one is selected
             if pygame.mouse.get_pressed()[0] == 1:
                 for i in range(len(boxes)):
                     boxes[i].update_checkbox()
                     if boxes[i].checked is True:
+                        selected_color = boxes[i].check_color
                         for j in range(i):
                             boxes[j].checked = False
+
+            # draw creator grid
+            grid_.draw_creator_grid(selected_color)
+
+            # add clear button
+            clear_button.create_button()
+            # add save button
+            save_button.create_button()
+            # add back button
+            back_button.create_button()
 
         elif start_clicked is False and creator_clicked is False and options_clicked is True and about_clicked is False: # OPTIONS
             is_visible[0] = False

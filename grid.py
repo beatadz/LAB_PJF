@@ -12,6 +12,7 @@ class Grid(object):
         self.grid_colors = []
         self.board_width = board_width
         self.select = []
+        self.count = 0
 
     def list_for_grid(self):
         for i in range(0, self.columns):
@@ -42,28 +43,25 @@ class Grid(object):
                 pygame.draw.rect(self.screen, self.grid_colors[j][i], [self.line_thickness + (i * self.block_side) + start_drawing,
                                                                   self.line_thickness + (j * self.block_side) + 200,
                                                                   self.block_side, self.block_side], 1)
-    def draw_creator_grid(self):
+    def draw_creator_grid(self, selected_color):
         start_drawing = 110
         for i in range(0, 4):
             for j in range(0, 4):
+                rect = pygame.Rect(self.line_thickness + (i * self.block_side) + start_drawing,
+                                   self.line_thickness + (j * self.block_side) + 190,
+                                   self.block_side, self.block_side)
                 if self.select[j][i] == self.main_color:
-                    rect = pygame.Rect(self.line_thickness + (i * self.block_side) + start_drawing,
-                                       self.line_thickness + (j * self.block_side) + 190,
-                                       self.block_side, self.block_side)
                     pygame.draw.rect(self.screen, self.select[j][i], rect, 1)
                 else:
-                    rect = pygame.Rect(self.line_thickness + (i * self.block_side) + start_drawing,
-                                       self.line_thickness + (j * self.block_side) + 190,
-                                       self.block_side, self.block_side)
                     pygame.draw.rect(self.screen, self.select[j][i], rect, 0)
                 # get mouse position
                 pos = pygame.mouse.get_pos()
 
                 # check mouseover and clicked conditions
-                if rect.collidepoint(pos):
+                if rect.collidepoint(pos) and self.count < 4:
                     if pygame.mouse.get_pressed()[0] == 1:
-                        #pygame.draw.rect(self.screen, (0, 0, 0), rect, 0)
-                        self.select[j][i] = (0, 0, 0)
+                        self.count += 1
+                        self.select[j][i] = selected_color
 
                 #pygame.draw.rect(self.screen, self.main_color, rect, 1)
 
