@@ -1,7 +1,7 @@
 import pygame
 
 class Checkbox:
-    def __init__(self, screen, x, y, color, text, outline_color, check_color, font_size, font_color, text_x, text_y, font_):
+    def __init__(self, screen, x, y, color, text, outline_color, check_color, font_size, font_color, text_x, text_y, font_, text_background):
         self.screen = screen
         self.x = x
         self.y = y
@@ -15,6 +15,7 @@ class Checkbox:
         self.text_y = text_y
         self.font_ = font_
         self.font = pygame.font.SysFont(self.font_, self.font_size)
+        self.text_background = text_background
         self.checkbox_size = 15
         self.time = pygame.time.Clock().tick(1000)
 
@@ -29,9 +30,9 @@ class Checkbox:
 
     def draw_button_text(self):
         #self.font = pygame.font.SysFont(self.font, self.font_size)
-        width, height = self.font.size(self.text)
-        font_position = (self.x + self.checkbox_size + 5, self.y - 6)
-        self.screen.blit(self.font.render(self.text, True, self.font_color), font_position)
+        #width, height = self.font.size(self.text)
+        font_position = (self.x + self.checkbox_size + 10, self.y - 4)
+        self.screen.blit(self.font.render(self.text, True, self.font_color, self.text_background), font_position)
 
     def render_checkbox(self):
         self.time += pygame.time.Clock().tick(1000)
@@ -53,10 +54,6 @@ class Checkbox:
                 self.time = 0
                 if not self.checked:
                     self.checked = True
-                    print(self.checked)
                 elif self.checked:
                     self.checked = False
-                    print(self.checked)
-
-        return self.checked
 

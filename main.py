@@ -25,6 +25,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     options_clicked = False
     about_clicked = False
     boxes = []
+    is_visible = [True, True, True, True]
 
     background_image = pygame.image.load("resources/background.png")
 
@@ -47,8 +48,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
 
     # radio buttons - do poprawy
     for i in range(len(shapes.shape_colors)):
-        r_button = checkbox.Checkbox(screen, 450, 190 + (i * 50), (255, 255, 255), "color", (0, 0, 0), shapes.shape_colors[i], 20, shapes.shape_colors[i], 470,
-                                 190 + (i * 50), "arial")
+        r_button = checkbox.Checkbox(screen, 550, 190 + (i * 50), (255, 255, 255), "color", (0, 0, 0), shapes.shape_colors[i], 20, shapes.shape_colors[i], 570,
+                                 190 + (i * 50), "arial", shapes.shape_colors[i])
         boxes.append(r_button)
 
 
@@ -97,19 +98,22 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         about_button.create_button()
         quit_button.create_button()
 
-        if start_button.click_check() is True:
+        if start_button.click_check() is True and is_visible[0] is True:
             start_clicked = True
-        elif creator_button.click_check() is True:
+        elif creator_button.click_check() is True and is_visible[1] is True:
             creator_clicked = True
-        elif options_button.click_check() is True:
+        elif options_button.click_check() is True and is_visible[2] is True:
             options_clicked = True
-        elif about_button.click_check() is True:
+        elif about_button.click_check() is True and is_visible[3] is True:
             about_clicked = True
         elif quit_button.click_check() is True:
             running = False
 
 
         if start_clicked is False and creator_clicked is True and options_clicked is False and about_clicked is False: # SHAPE CREATOR
+            is_visible[0] = False
+            is_visible[2] = False
+            is_visible[3] = False
             screen.fill((192, 192, 192))
             # draw - "MAKE YOUR OWN SHAPES"
             font = pygame.font.SysFont('arial', 60)
@@ -130,19 +134,38 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
             # draw grid
             grid_.draw_creator_grid()
+            # draw - "COLOR"
+            font = pygame.font.SysFont('arial', 30)
+            color_text = font.render("COLOR", True, (0, 0, 0))
+            screen.blit(color_text, (535, 130))
+            #draw - "SELECT FOUR SQUARES"
+            shape_text = font.render("SELECT FOUR SQUARES", True, (0, 0, 0))
+            screen.blit(shape_text, (45, 130))
             # radio buttons -> colors
             for box in boxes:
                 box.render_checkbox()
 
             if pygame.mouse.get_pressed()[0] == 1:
-                for box in boxes:
-                    x = box.update_checkbox()
+                for i in range(len(boxes)):
+                    boxes[i].update_checkbox()
+                    if boxes[i].checked is True:
+                        for j in range(i):
+                            boxes[j].checked = False
 
         elif start_clicked is False and creator_clicked is False and options_clicked is True and about_clicked is False: # OPTIONS
+            is_visible[0] = False
+            is_visible[1] = False
+            is_visible[3] = False
             screen.fill((192, 192, 192))
         elif start_clicked is False and creator_clicked is False and options_clicked is False and about_clicked is True: # ABOUT
+            is_visible[0] = False
+            is_visible[1] = False
+            is_visible[2] = False
             screen.fill((192, 192, 192))
         elif start_clicked is True: # GAME
+            is_visible[1] = False
+            is_visible[2] = False
+            is_visible[3] = False
             screen.fill((192, 192, 192))  # change background color
             grid_.draw_grid() # draw grid
             grid_.draw_small_grid()
