@@ -29,6 +29,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     save_clicked = False
     boxes = []
     is_visible = [True, True, True, True]
+    new_shapes_count = 0
 
     background_image = pygame.image.load("resources/background.png")
 
@@ -148,9 +149,9 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             font = pygame.font.SysFont('arial', 30)
             color_text = font.render("COLOR", True, (0, 0, 0))
             screen.blit(color_text, (535, 130))
-            #draw - "SELECT FOUR SQUARES"
-            shape_text = font.render("SELECT FOUR SQUARES", True, (0, 0, 0))
-            screen.blit(shape_text, (45, 130))
+            #draw - "SELECT SQUARES"
+            shape_text = font.render("SELECT SQUARES", True, (0, 0, 0))
+            screen.blit(shape_text, (90, 130))
             # radio buttons -> colors
             for box in boxes:
                 box.render_checkbox()
@@ -172,11 +173,12 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 grid_.clear_creator_grid(boxes)
             # add save button
             save_button.create_button()
-            if save_button.click_check() is True:
-                new = new_shape.NewShape()
-                empty = new.save_shape(grid_)
+            if save_button.click_check() is True and start_clicked is False:
+                new = new_shape.NewShape(grid_)
+                empty = new.save_shape(grid_, new_shapes_count)
                 # draw - "SAVED"
                 if empty is False:
+                    new_shapes_count += 1
                     font = pygame.font.SysFont('arial', 30)
                     color_text = font.render("SAVED", True, (0, 0, 0))
                     screen.blit(color_text, (150, 500))

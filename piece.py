@@ -42,23 +42,30 @@ class Piece(object):
 
         # nr - position, j - row, k - column, i - index of column_row
         # print(current_piece.shape)
+
         x = self.shape
 
         # check if the first row is empty
         for a in range(s_column):
             if x[nr][0][a] == '0':
                 count += 1
-
-        if count == 4:
-            j = 1
+        #if count == 4:
+            #j = 1
         # ACTUAL SHAPE
         while j < s_row:
             while k < s_column:
                 if x[nr][j][k] == '1':
-                    pygame.draw.rect(self.screen, self.color, [self.line_thickness + ((self.column + k) * self.block_side),
-                                                               self.line_thickness + ((self.row + j) * self.block_side),
-                                                               self.block_side, self.block_side], 0)
-                    self.column_row[i] = self.column + k, self.row + j
+                    if count == 4:
+                        pygame.draw.rect(self.screen, self.color, [self.line_thickness + ((self.column + k) * self.block_side),
+                                                                   self.line_thickness + ((self.row + j - 1) * self.block_side),
+                                                                   self.block_side, self.block_side], 0)
+                        self.column_row[i] = self.column + k, self.row + j
+                    else:
+                        pygame.draw.rect(self.screen, self.color,
+                                         [self.line_thickness + ((self.column + k) * self.block_side),
+                                          self.line_thickness + ((self.row + j) * self.block_side),
+                                          self.block_side, self.block_side], 0)
+                        self.column_row[i] = self.column + k, self.row + j
 
                     i += 1
                 k += 1
@@ -109,8 +116,10 @@ class Piece(object):
         for x in self.column_row:
             if x[1] >= 19:
                 end = False
-            elif x[1] == 0 and self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
-                self.stop = False
+            elif x[1] == 0: #elif x[1] == 0 and self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
+                for y in self.column_row:
+                    if self.grid.grid_colors[x[1] + 1][y[0]] != self.grid.main_color:
+                        self.stop = False
             else:
                 if self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
                     end = False
