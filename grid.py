@@ -40,3 +40,10 @@ class Grid(object):
                 pygame.draw.rect(self.screen, self.grid_colors[j][i], [self.line_thickness + (i * self.block_side) + start_drawing,
                                                                   self.line_thickness + (j * self.block_side) + 200,
                                                                   self.block_side, self.block_side], 1)
+    def draw_creator_grid(self):
+        start_drawing = 100
+        for i in range(0, 4):
+            for j in range(0, 4):
+                pygame.draw.rect(self.screen, self.grid_colors[j][i], [self.line_thickness + (i * self.block_side) + start_drawing,
+                                                                  self.line_thickness + (j * self.block_side) + 150,
+                                                                  self.block_side, self.block_side], 1)

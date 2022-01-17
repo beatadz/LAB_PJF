@@ -5,6 +5,7 @@ import grid
 import random
 import score
 import button
+import checkbox
 
 def draw_frame(screen, board_width, board_height, line_thickness):
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
@@ -23,6 +24,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     creator_clicked = False
     options_clicked = False
     about_clicked = False
+    boxes = []
 
     background_image = pygame.image.load("resources/background.png")
 
@@ -42,6 +44,13 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     quit_button_width, quit_button_height = quit_button_image.get_size()
 
     gap = 80
+
+    # radio buttons - do poprawy
+    for i in range(len(shapes.shape_colors)):
+        r_button = checkbox.Checkbox(screen, 450, 190 + (i * 50), (255, 255, 255), "color", (0, 0, 0), shapes.shape_colors[i], 20, shapes.shape_colors[i], 470,
+                                 190 + (i * 50), "arial")
+        boxes.append(r_button)
+
 
     # Game Loop
     while running:
@@ -73,6 +82,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             screen_width / 2 - quit_button_width / 2, screen_height / 2 - quit_button_height / 2 + 3 * gap), "arial",
                                        (0, 0, 0), 23, quit_button_image, 1, screen)
 
+
         if key[pygame.K_SPACE]: # chwilowo
             start_clicked = True
 
@@ -98,9 +108,10 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         elif quit_button.click_check() is True:
             running = False
 
+
         if start_clicked is False and creator_clicked is True and options_clicked is False and about_clicked is False: # SHAPE CREATOR
             screen.fill((192, 192, 192))
-            # DRAW - "MAKE YOUR OWN SHAPES"
+            # draw - "MAKE YOUR OWN SHAPES"
             font = pygame.font.SysFont('arial', 60)
             w2, h2 = font.size("MAKE YOUR OWN SHAPES")
             w, h = font.size("MAKE")
@@ -115,16 +126,23 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             creator_text = font.render(" OWN", True, (50,205,50))
             screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
             width += w
-            w, h = font.size(" SHAPES")
             creator_text = font.render(" SHAPES", True, (255,140,0))
             screen.blit(creator_text, (screen_width / 2 - w2 / 2 + width, 0))
+            # draw grid
+            grid_.draw_creator_grid()
+            # radio buttons -> colors
+            for box in boxes:
+                box.render_checkbox()
+
+            if pygame.mouse.get_pressed()[0] == 1:
+                for box in boxes:
+                    x = box.update_checkbox()
 
         elif start_clicked is False and creator_clicked is False and options_clicked is True and about_clicked is False: # OPTIONS
             screen.fill((192, 192, 192))
         elif start_clicked is False and creator_clicked is False and options_clicked is False and about_clicked is True: # ABOUT
             screen.fill((192, 192, 192))
         elif start_clicked is True: # GAME
-            #start_clicked = True
             screen.fill((192, 192, 192))  # change background color
             grid_.draw_grid() # draw grid
             grid_.draw_small_grid()

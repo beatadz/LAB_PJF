@@ -1,7 +1,7 @@
 import pygame
 
 class Checkbox:
-    def __init__(self, screen, x, y, color, text, outline_color, check_color, font_size, font_color, text_offset, font):
+    def __init__(self, screen, x, y, color, text, outline_color, check_color, font_size, font_color, text_x, text_y, font_):
         self.screen = screen
         self.x = x
         self.y = y
@@ -11,9 +11,12 @@ class Checkbox:
         self.check_color = check_color
         self.font_size = font_size
         self.font_color = font_color
-        self.text_offset = text_offset
-        self.font = font
+        self.text_x = text_x
+        self.text_y = text_y
+        self.font_ = font_
+        self.font = pygame.font.SysFont(self.font_, self.font_size)
         self.checkbox_size = 15
+        self.time = pygame.time.Clock().tick(1000)
 
         # checkbox object
         self.checkbox_obj = pygame.Rect(self.x, self.y, self.checkbox_size, self.checkbox_size)
@@ -22,33 +25,38 @@ class Checkbox:
         # variables to test the different states of the checkbox
         self.checked = False
 
-    def _draw_button_text(self):
-        self.font = pygame.font.SysFont(self.font, self.font_size)
+        self.rectangle = pygame.Rect(self.checkbox_obj)
+
+    def draw_button_text(self):
+        #self.font = pygame.font.SysFont(self.font, self.font_size)
         width, height = self.font.size(self.text)
-        self.font_position = (self.x + self.text_offset[0], self.y + 15 / 2 - height / 2 + self.text_offset[1])
-        self.screen.blit(self.font.render(self.text, True, self.font_color), self.font_position)
+        font_position = (self.x + self.checkbox_size + 5, self.y - 6)
+        self.screen.blit(self.font.render(self.text, True, self.font_color), font_position)
 
     def render_checkbox(self):
+        self.time += pygame.time.Clock().tick(1000)
+
         if self.checked:
             pygame.draw.rect(self.screen, self.color, self.checkbox_obj)
             pygame.draw.rect(self.screen, self.outline_color, self.checkbox_outline, 1)
-            pygame.draw.circle(self.screen, self.check_color, (self.x + 6, self.y + 6), 4)
-
+            pygame.draw.rect(self.screen, self.check_color, (self.x + 1, self.y + 1, self.checkbox_size - 2, self.checkbox_size - 2), 0)
         elif not self.checked:
             pygame.draw.rect(self.screen, self.color, self.checkbox_obj)
             pygame.draw.rect(self.screen, self.outline_color, self.checkbox_outline, 1)
-        self._draw_button_text()
 
-    def _update(self, event_object):
-        x, y = pygame.mouse.get_pos()
-        px, py, w, h = self.checkbox_obj
-        if px < x < px + w and py < y < py + w:
-            if self.checked:
-                self.checked = False
-            else:
-                self.checked = True
+        self.draw_button_text()
 
-    def update_checkbox(self, event_object):
-        if event_object.type == pygame.MOUSEBUTTONDOWN:
-            self.click = True
-            self._update(event_object)
+    def update_checkbox(self):
+        pos = pygame.mouse.get_pos()
+        if self.rectangle.collidepoint(pos):
+            if self.time/1000.0 > 0.01:
+                self.time = 0
+                if not self.checked:
+                    self.checked = True
+                    print(self.checked)
+                elif self.checked:
+                    self.checked = False
+                    print(self.checked)
+
+        return self.checked
+
