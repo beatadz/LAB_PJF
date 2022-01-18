@@ -10,11 +10,10 @@ class Score(object):
         self.board_height = board_height
         self.board_width = board_width
 
-    def display_score(self):
+    def display_score(self, font_color, text_size, x, y):
         text = "SCORE: "
         add = str(self.game_score)
         text = text + add
-        font_color = (0, 0, 0)
-        font = pygame.font.SysFont('arial',  30)
+        font = pygame.font.SysFont('arial',  text_size)
         score_text = font.render(text, True, font_color)
-        self.screen.blit(score_text, (self.board_width + 20, 0))
+        self.screen.blit(score_text, (x, y))

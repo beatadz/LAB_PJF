@@ -12,6 +12,8 @@ def draw_frame(screen, board_width, board_height, line_thickness):
     pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
 def game_loop(screen, grid_, current_piece, score_, board_width, board_height, line_thickness, screen_width, screen_height):
+    # VARIABLES
+
     clock = pygame.time.Clock()
     FPS = 60
     speed = 3000
@@ -25,11 +27,14 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     creator_clicked = False
     options_clicked = False
     about_clicked = False
+    game_over_clicked = False
     clear_clicked = False
     save_clicked = False
     boxes = []
     is_visible = [True, True, True, True]
     new_shapes_count = 0
+
+    # IMAGES
 
     background_image = pygame.image.load("resources/background.png")
 
@@ -58,6 +63,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                                  190 + (i * 50), "arial", shapes.shape_colors[i])
         boxes.append(r_button)
 
+    # BUTTONS
+
     start_button = button.Button("START", (
         screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 - gap), "arial",
                                  (0, 0, 0), 23, start_button_image, 1, screen)
@@ -81,6 +88,12 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
 
     start2_button = button.Button("START", (75 + 0.7 * button_width, 710), "arial", (0, 0, 0), 23, start_button_image, 0.7, screen)
 
+    play_again_button = button.Button("PLAY AGAIN", (screen_width/2 - button_width/2, screen_height/2 - button_height/2), "arial", (0, 0, 0), 23, start_button_image, 1, screen)
+
+    back2_button = button.Button("BACK", (screen_width/2 - button_width/2, screen_height/2 - button_height/2 + button_height + 20), "arial", (0, 0, 0), 23, back_button_image, 1, screen)
+
+    quit2_button = button.Button("QUIT", (screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 2 * button_height + 40), "arial", (0, 0, 0), 23, about_button_image, 1, screen)
+
     # Game Loop
     while running:
         key = pygame.key.get_pressed()
@@ -100,6 +113,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         if key[pygame.K_SPACE]: # chwilowo
             start_clicked = True
 
+        # MAIN WINDOW
         tetris_title = pygame.image.load("resources/Tetris.png")
         tetris_title = pygame.transform.scale(tetris_title, (screen_width - 200, 131))
         screen.fill((192, 192, 192))
@@ -111,6 +125,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         about_button.create_button()
         quit_button.create_button()
 
+        # check if user clicked on any button
         if start_button.click_check() is True and is_visible[0] is True:
             start_clicked = True
         elif creator_button.click_check() is True and is_visible[1] is True:
@@ -121,7 +136,6 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             about_clicked = True
         elif quit_button.click_check() is True:
             running = False
-
 
         if start_clicked is False and creator_clicked is True and options_clicked is False and about_clicked is False: # SHAPE CREATOR
             is_visible[0] = False
@@ -189,6 +203,10 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 creator_clicked = False
                 options_clicked = False
                 about_clicked = False
+                is_visible[0] = True
+                is_visible[1] = True
+                is_visible[2] = True
+                is_visible[3] = True
             # add start button
             start2_button.create_button()
             if start2_button.click_check() is True:
@@ -205,57 +223,95 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             is_visible[1] = False
             is_visible[2] = False
             screen.fill((192, 192, 192))
-        elif start_clicked is True: # GAME
+        elif start_clicked is True and game_over_clicked is False: # GAME
             is_visible[1] = False
             is_visible[2] = False
             is_visible[3] = False
             screen.fill((192, 192, 192))  # change background color
             grid_.draw_grid() # draw grid
-            grid_.draw_small_grid()
+            grid_.draw_small_grid() # draw grid for next shape
             draw_frame(screen, board_width, board_height, line_thickness) # draw frame
             current_piece.draw_shape() # draw first shape
-            current_piece.draw_next_shape()
-            score_.display_score() # display game score
+            current_piece.draw_next_shape() # draw next shape
+            score_.display_score((0, 0, 0), 30, board_width + 20, 0) # display game score
             shapes.display_next(screen, board_width) # display "next"
-
-            # check stop condition
-            if current_piece.stop is False:
-                running = False
 
             c_right = current_piece.check_right()
             c_left = current_piece.check_left()
             c_bottom = current_piece.check_bottom()
 
-            # check if there is any full or empty line
-            current_piece.check_full_line()
-            current_piece.fix_empty_lines()
+            # check stop condition
+            current_piece.check_end()
+            if current_piece.stop is False:
+                game_over_clicked = True
+                start_clicked = False
 
-            # KEYBOARD
-            if key[pygame.K_UP] or key[pygame.K_w]:
-                if rotation_counter > rotation_speed and current_piece.check_rotation() is True:
-                    current_piece.rotation += 1
-                    rotation_counter = 0
+            else:
+                # check if there is any full or empty line
+                current_piece.check_full_line()
+                current_piece.fix_empty_lines()
 
-            if key[pygame.K_DOWN] or key[pygame.K_s]:
-                is_down = True
-                if move_counter > move_speed and c_bottom is True:
+                # KEYBOARD
+                if key[pygame.K_UP] or key[pygame.K_w]:
+                    if rotation_counter > rotation_speed and current_piece.check_rotation() is True:
+                        current_piece.rotation += 1
+                        rotation_counter = 0
+
+                if key[pygame.K_DOWN] or key[pygame.K_s]:
+                    is_down = True
+                    if move_counter > move_speed and c_bottom is True:
+                        current_piece.row += 1
+                        move_counter = 0
+                elif key[pygame.K_RIGHT] or key[pygame.K_d]:
+                    if move_counter > move_speed and c_right is True:
+                        current_piece.column += 1
+                        move_counter = 0
+                elif key[pygame.K_LEFT] or key[pygame.K_a]:
+                    if move_counter > move_speed and c_left is True:
+                        current_piece.column -= 1
+                        move_counter = 0
+
+                if falling / speed > 0.1 and is_down is False:
                     current_piece.row += 1
-                    move_counter = 0
-            elif key[pygame.K_RIGHT] or key[pygame.K_d]:
-                if move_counter > move_speed and c_right is True:
-                    current_piece.column += 1
-                    move_counter = 0
-            elif key[pygame.K_LEFT] or key[pygame.K_a]:
-                if move_counter > move_speed and c_left is True:
-                    current_piece.column -= 1
-                    move_counter = 0
-
-            if falling / speed > 0.1 and is_down is False:
-                current_piece.row += 1
-                # print(current_piece.column, current_piece.row)
-                # print(current_piece.check_left(), current_piece.check_right())
-                falling = 0
-
+                    # print(current_piece.column, current_piece.row)
+                    # print(current_piece.check_left(), current_piece.check_right())
+                    falling = 0
+        elif game_over_clicked is True:
+            # GAME OVER WINDOW
+            screen.fill((192, 192, 192))
+            screen.blit(background_image, (0, 0))
+            # draw - "GAME OVER"
+            font = pygame.font.SysFont('arial', 60)
+            game_over_text = font.render("GAME OVER", True, (0, 0, 0))
+            text_width, text_height = font.size("GAME OVER")
+            screen.blit(game_over_text, (screen_width / 2 - text_width / 2, screen_height / 2 - 300))
+            play_again_button.create_button()
+            back2_button.create_button()
+            quit2_button.create_button()
+            font = pygame.font.SysFont('arial', 50)
+            text_width, text_height = font.size("SCORE: ")
+            score_.display_score((0, 0, 0), 50, screen_width / 2 - text_width / 2,
+                                 screen_height / 2 - 200)  # display game score
+            # check if user wants to start the game
+            if play_again_button.click_check() is True:
+                grid_.clear_grid() # clean everything
+                score_.game_score = 0 # reset score
+                game_over_clicked = False
+                current_piece.stop = True
+                start_clicked = True
+            # check if user wants to back to the main window
+            elif back2_button.click_check() is True:
+                start_clicked = False
+                creator_clicked = False
+                options_clicked = False
+                about_clicked = False
+                grid_.clear_grid()  # clean everything
+                score_.game_score = 0  # reset score
+                game_over_clicked = False
+                current_piece.stop = True
+            # check if user wants to end the game
+            elif quit2_button.click_check() is True:
+                running = False
 
         pygame.display.update()
         clock.tick(FPS)

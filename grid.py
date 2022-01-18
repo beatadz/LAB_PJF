@@ -78,3 +78,7 @@ class Grid(object):
                     box.checked = False
 
 
+    def clear_grid(self):
+        for i in range(0, self.columns):
+            for j in range(0, self.rows):
+                self.grid_colors[j][i] = self.main_color

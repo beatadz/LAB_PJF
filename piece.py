@@ -116,15 +116,10 @@ class Piece(object):
         for x in self.column_row:
             if x[1] >= 19:
                 end = False
-            elif x[1] == 0: #elif x[1] == 0 and self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
-                for y in self.column_row:
-                    if self.grid.grid_colors[x[1] + 1][y[0]] != self.grid.main_color:
-                        self.stop = False
-            else:
-                if self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
-                    end = False
+            elif self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
+                end = False
 
-        if end is False:
+        if end is False and self.stop is True:
             self.checked = 0
             #print(self.column_row)
             for x in self.column_row:
@@ -140,6 +135,12 @@ class Piece(object):
                     self.column += 1
 
         return end
+
+    def check_end(self):
+        for x in self.column_row:
+            if (x[1] == 0 or x[1] == 1) and self.grid.grid_colors[x[1] + 1][x[0]] != self.grid.main_color:
+                self.stop = False
+
 
     def check_rotation(self):
         end = True
