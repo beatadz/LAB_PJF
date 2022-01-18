@@ -8,7 +8,7 @@ class Grid(object):
         self.screen = screen
         self.line_thickness = line_thickness
         self.block_side = block_side
-        self.main_color = (255,255,255)
+        self.main_color = (225,225,225)
         self.column_row = []
         self.grid_colors = []
         self.board_width = board_width

@@ -8,12 +8,13 @@ import button
 import checkbox
 import new_shape
 
-def draw_frame(screen, board_width, board_height, line_thickness):
-    pygame.draw.rect(screen, [0,0,0], [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
+
+def draw_frame(screen, board_width, board_height, line_thickness, color):
+    pygame.draw.rect(screen, color, [0, 0, board_width + 2 * line_thickness, board_height], line_thickness)
 
 def game_loop(screen, grid_, current_piece, score_, board_width, board_height, line_thickness, screen_width, screen_height):
     # VARIABLES
-
+    frame_color =  (0, 0, 0)
     clock = pygame.time.Clock()
     FPS = 60
     speed = 3000
@@ -26,83 +27,103 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     start_clicked = False
     creator_clicked = False
     options_clicked = False
-    about_clicked = False
+    controls_clicked = False
     game_over_clicked = False
-    clear_clicked = False
-    save_clicked = False
     boxes = []
+    show = True
+    pause = False
     is_visible = [True, True, True, True]
     new_shapes_count = 0
-
+    background_color = (192, 192, 192)
+    time = pygame.time.Clock().tick(1000)
     # IMAGES
 
     background_image = pygame.image.load("resources/background.png")
 
-    start_button_image = pygame.image.load("resources/blue_button.png")
-    button_width, button_height = start_button_image.get_size()
+    blue_button_image = pygame.image.load("resources/blue_button.png")
+    button_width, button_height = blue_button_image.get_size()
 
-    creator_button_image = pygame.image.load("resources/pink_button.png")
+    pink_button_image = pygame.image.load("resources/pink_button.png")
 
-    options_button_image = pygame.image.load("resources/yellow_button.png")
+    yellow_button_image = pygame.image.load("resources/yellow_button.png")
 
-    about_button_image = pygame.image.load("resources/green_button.png")
+    green_button_image = pygame.image.load("resources/green_button.png")
 
-    quit_button_image = pygame.image.load("resources/purple_button.png")
+    purple_button_image = pygame.image.load("resources/purple_button.png")
 
-    clear_button_image = pygame.image.load("resources/yellow_button.png")
+    p_m_button_image = pygame.image.load("resources/plus_minus_button.png")
 
-    save_button_image = pygame.image.load("resources/green_button.png")
+    controls_image = pygame.image.load("resources/controls2.png")
 
-    back_button_image = pygame.image.load("resources/purple_button.png")
+    pause_image = pygame.image.load("resources/pause.png")
 
     gap = 80
 
-    # radio buttons - do poprawy
+    # RADIO BUTTONS
     for i in range(len(shapes.shape_colors)):
         r_button = checkbox.Checkbox(screen, 550, 190 + (i * 50), (255, 255, 255), "color", (0, 0, 0), shapes.shape_colors[i], 20, shapes.shape_colors[i], 570,
                                  190 + (i * 50), "arial", shapes.shape_colors[i])
         boxes.append(r_button)
 
+    dark_mode_button = checkbox.Checkbox(screen, 100, 190, background_color, "DARK MODE", (0, 0, 0),
+                                         (102, 178, 255), 20, (0, 0, 0), 120,
+                                         170, "arial", background_color)
+    rotation_button = checkbox.Checkbox(screen, 100, 240, background_color, "ROTATION", (0, 0, 0),
+                                        (102, 178, 255), 20, (0, 0, 0), 120,
+                                        240, "arial", background_color)
+    rotation_button.checked = True
+
+    show_next_shape_button = checkbox.Checkbox(screen, 100, 290, background_color, "SHOW NEXT SHAPE", (0, 0, 0),
+                                        (102, 178, 255), 20, (0, 0, 0), 120,
+                                        290, "arial", background_color)
+    show_next_shape_button.checked = True
+
     # BUTTONS
 
     start_button = button.Button("START", (
         screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 - gap), "arial",
-                                 (0, 0, 0), 23, start_button_image, 1, screen)
+                                 (0, 0, 0), 23, blue_button_image, 1, screen)
     creator_button = button.Button("SHAPE CREATOR", (
         screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2), "arial",
-                                   (0, 0, 0), 23, creator_button_image, 1, screen)
+                                   (0, 0, 0), 23, pink_button_image, 1, screen)
     options_button = button.Button("OPTIONS", (
         screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + gap), "arial",
-                                   (0, 0, 0), 23, options_button_image, 1, screen)
-    about_button = button.Button("ABOUT", (
+                                   (0, 0, 0), 23, yellow_button_image, 1, screen)
+    controls_button = button.Button("CONTROLS", (
         screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 2 * gap), "arial",
-                                 (0, 0, 0), 23, about_button_image, 1, screen)
+                                 (0, 0, 0), 23, green_button_image, 1, screen)
     quit_button = button.Button("QUIT", (
         screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 3 * gap), "arial",
-                                (0, 0, 0), 23, quit_button_image, 1, screen)
-    clear_button = button.Button("CLEAR", (65, 380), "arial",(0, 0, 0), 23, clear_button_image, 0.7, screen)
+                                (0, 0, 0), 23, purple_button_image, 1, screen)
+    clear_button = button.Button("CLEAR", (65, 380), "arial",(0, 0, 0), 23, yellow_button_image, 0.7, screen)
 
-    save_button = button.Button("SAVE", (0.7 * button_width + 75, 380), "arial", (0, 0, 0), 23, save_button_image, 0.7, screen)
+    save_button = button.Button("SAVE", (0.7 * button_width + 75, 380), "arial", (0, 0, 0), 23, green_button_image, 0.7, screen)
 
-    back_button = button.Button("BACK", (65, 710), "arial", (0, 0, 0), 23, back_button_image, 0.7, screen)
+    back_button = button.Button("BACK", (65, 710), "arial", (0, 0, 0), 23, purple_button_image, 0.7, screen)
 
-    start2_button = button.Button("START", (75 + 0.7 * button_width, 710), "arial", (0, 0, 0), 23, start_button_image, 0.7, screen)
+    start2_button = button.Button("START", (75 + 0.7 * button_width, 710), "arial", (0, 0, 0), 23, blue_button_image, 0.7, screen)
 
-    play_again_button = button.Button("PLAY AGAIN", (screen_width/2 - button_width/2, screen_height/2 - button_height/2), "arial", (0, 0, 0), 23, start_button_image, 1, screen)
+    play_again_button = button.Button("PLAY AGAIN", (screen_width/2 - button_width/2, screen_height/2 - button_height/2), "arial", (0, 0, 0), 23, blue_button_image, 1, screen)
 
-    back2_button = button.Button("BACK", (screen_width/2 - button_width/2, screen_height/2 - button_height/2 + button_height + 20), "arial", (0, 0, 0), 23, back_button_image, 1, screen)
+    back2_button = button.Button("BACK", (screen_width/2 - button_width/2, screen_height/2 - button_height/2 + button_height + 20), "arial", (0, 0, 0), 23, purple_button_image, 1, screen)
 
-    quit2_button = button.Button("QUIT", (screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 2 * button_height + 40), "arial", (0, 0, 0), 23, about_button_image, 1, screen)
+    back3_button = button.Button("BACK", (screen_width / 2 - button_width / 2, screen_height - 120), "arial", (0, 0, 0), 23, blue_button_image, 1, screen)
+
+    back4_button = button.Button("BACK", (screen_width / 2 - button_width / 2, screen_height - 120), "arial", (0, 0, 0), 23, blue_button_image, 1, screen)
+
+    quit2_button = button.Button("QUIT", (screen_width / 2 - button_width / 2, screen_height / 2 - button_height / 2 + 2 * button_height + 40), "arial", (0, 0, 0), 23, green_button_image, 1, screen)
 
     # Game Loop
     while running:
         key = pygame.key.get_pressed()
-        screen.fill((192, 192, 192))
+        screen.fill(background_color)
         falling += clock.tick(FPS)
         rotation_counter += 1
         move_counter += 1
         is_down = False
         selected_color = 0
+        rotate = True
+        time += pygame.time.Clock().tick(1000)
 
         # ESC OR GAME OVER
         for event in pygame.event.get():
@@ -110,19 +131,20 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 running = False
 
 
-        if key[pygame.K_SPACE]: # chwilowo
+        if key[pygame.K_m]: # chwilowo
             start_clicked = True
+
 
         # MAIN WINDOW
         tetris_title = pygame.image.load("resources/Tetris.png")
         tetris_title = pygame.transform.scale(tetris_title, (screen_width - 200, 131))
-        screen.fill((192, 192, 192))
+        screen.fill(background_color)
         screen.blit(tetris_title, (screen_width / 2 - ((screen_width - 200) / 2), 100))
         screen.blit(background_image, (0, 0))
         start_button.create_button()
         creator_button.create_button()
         options_button.create_button()
-        about_button.create_button()
+        controls_button.create_button()
         quit_button.create_button()
 
         # check if user clicked on any button
@@ -132,16 +154,16 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             creator_clicked = True
         elif options_button.click_check() is True and is_visible[2] is True:
             options_clicked = True
-        elif about_button.click_check() is True and is_visible[3] is True:
-            about_clicked = True
+        elif controls_button.click_check() is True and is_visible[3] is True:
+            controls_clicked = True
         elif quit_button.click_check() is True:
             running = False
 
-        if start_clicked is False and creator_clicked is True and options_clicked is False and about_clicked is False: # SHAPE CREATOR
+        if start_clicked is False and creator_clicked is True and options_clicked is False and controls_clicked is False: # SHAPE CREATOR
             is_visible[0] = False
             is_visible[2] = False
             is_visible[3] = False
-            screen.fill((192, 192, 192))
+            screen.fill(background_color)
             # draw - "MAKE YOUR OWN SHAPES"
             font = pygame.font.SysFont('arial', 60)
             w2, h2 = font.size("MAKE YOUR OWN SHAPES")
@@ -202,7 +224,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 start_clicked = False
                 creator_clicked = False
                 options_clicked = False
-                about_clicked = False
+                controls_clicked = False
                 is_visible[0] = True
                 is_visible[1] = True
                 is_visible[2] = True
@@ -213,28 +235,93 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 creator_clicked = False
                 start_clicked = True
 
-        elif start_clicked is False and creator_clicked is False and options_clicked is True and about_clicked is False: # OPTIONS
+        elif start_clicked is False and creator_clicked is False and options_clicked is True and controls_clicked is False: # OPTIONS
             is_visible[0] = False
             is_visible[1] = False
             is_visible[3] = False
-            screen.fill((192, 192, 192))
-        elif start_clicked is False and creator_clicked is False and options_clicked is False and about_clicked is True: # ABOUT
+            screen.fill(background_color)
+
+            font = pygame.font.SysFont('arial', 60)
+            options_text = font.render("OPTIONS", True, (0, 0, 0))
+            text_width, text_height = font.size("OPTIONS")
+            screen.blit(options_text, (screen_width / 2 - text_width / 2, 30))
+
+            # radio buttons
+            dark_mode_button.render_checkbox()
+            rotation_button.render_checkbox()
+            show_next_shape_button.render_checkbox()
+            if pygame.mouse.get_pressed()[0] == 1:
+                dark_mode_button.update_checkbox()
+                rotation_button.update_checkbox()
+                show_next_shape_button.update_checkbox()
+                if dark_mode_button.checked is True:
+                    background_color = (64, 64, 64)
+                else:
+                    background_color = (192, 192, 192)
+                dark_mode_button.color = rotation_button.color = dark_mode_button.text_background = rotation_button.text_background = show_next_shape_button.color = show_next_shape_button.text_background = background_color
+                if rotation_button.checked is True:
+                    rotate = not rotate
+                if show_next_shape_button.checked is True:
+                    show = True
+                else:
+                    show = False
+            # BACK BUTTON
+            back3_button.create_button()
+
+            if back3_button.click_check() is True:
+                start_clicked = False
+                creator_clicked = False
+                options_clicked = False
+                controls_clicked = False
+                is_visible[0] = True
+                is_visible[1] = True
+                is_visible[2] = True
+                is_visible[3] = True
+
+        elif start_clicked is False and creator_clicked is False and options_clicked is False and controls_clicked is True: # CONTROLS
             is_visible[0] = False
             is_visible[1] = False
             is_visible[2] = False
-            screen.fill((192, 192, 192))
+            screen.fill(background_color)
+            # draw - "CONTROLS"
+            font = pygame.font.SysFont('arial', 60)
+            controls_text = font.render("CONTROLS", True, (0, 0, 0))
+            text_width, text_height = font.size("CONTROLS")
+            screen.blit(controls_text, (screen_width / 2 - text_width / 2, 30))
+            # BACK BUTTON
+            back4_button.create_button()
+            # add image
+            image_width, image_height = controls_image.get_size()
+            screen.blit(controls_image, (screen_width/2 - image_width/2, 120))
+
+            if back4_button.click_check() is True:
+                start_clicked = False
+                creator_clicked = False
+                options_clicked = False
+                controls_clicked = False
+                is_visible[0] = True
+                is_visible[1] = True
+                is_visible[2] = True
+                is_visible[3] = True
+
         elif start_clicked is True and game_over_clicked is False: # GAME
             is_visible[1] = False
             is_visible[2] = False
             is_visible[3] = False
-            screen.fill((192, 192, 192))  # change background color
+            screen.fill(background_color)  # change background color
             grid_.draw_grid() # draw grid
-            grid_.draw_small_grid() # draw grid for next shape
-            draw_frame(screen, board_width, board_height, line_thickness) # draw frame
+            draw_frame(screen, board_width, board_height, line_thickness, frame_color) # draw frame
             current_piece.draw_shape() # draw first shape
-            current_piece.draw_next_shape() # draw next shape
+            if show is True:
+                grid_.draw_small_grid()  # draw grid for next shape
+                current_piece.draw_next_shape() # draw next shape
+                shapes.display_next(screen, board_width)  # display "next"
             score_.display_score((0, 0, 0), 30, board_width + 20, 0) # display game score
-            shapes.display_next(screen, board_width) # display "next"
+
+            if pause is True:
+                image_width, image_height = pause_image.get_size()
+                screen.blit(pause_image, (screen_width/2 - image_width/2, screen_height/2 - image_height/2))
+
 
             c_right = current_piece.check_right()
             c_left = current_piece.check_left()
@@ -252,33 +339,40 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 current_piece.fix_empty_lines()
 
                 # KEYBOARD
-                if key[pygame.K_UP] or key[pygame.K_w]:
-                    if rotation_counter > rotation_speed and current_piece.check_rotation() is True:
-                        current_piece.rotation += 1
-                        rotation_counter = 0
+                if key[pygame.K_SPACE]:
+                    if time / 1000.0 > 0.01:
+                        time = 0
+                        pause = not pause
 
-                if key[pygame.K_DOWN] or key[pygame.K_s]:
-                    is_down = True
-                    if move_counter > move_speed and c_bottom is True:
+                if pause is False:
+                    if key[pygame.K_UP] or key[pygame.K_w]:
+                        if rotation_counter > rotation_speed and current_piece.check_rotation() is True and rotate is True:
+                            current_piece.rotation += 1
+                            rotation_counter = 0
+
+                    if key[pygame.K_DOWN] or key[pygame.K_s]:
+                        is_down = True
+                        if move_counter > move_speed and c_bottom is True:
+                            current_piece.row += 1
+                            move_counter = 0
+                    elif key[pygame.K_RIGHT] or key[pygame.K_d]:
+                        if move_counter > move_speed and c_right is True:
+                            current_piece.column += 1
+                            move_counter = 0
+                    elif key[pygame.K_LEFT] or key[pygame.K_a]:
+                        if move_counter > move_speed and c_left is True:
+                            current_piece.column -= 1
+                            move_counter = 0
+
+                    if falling / speed > 0.1 and is_down is False:
                         current_piece.row += 1
-                        move_counter = 0
-                elif key[pygame.K_RIGHT] or key[pygame.K_d]:
-                    if move_counter > move_speed and c_right is True:
-                        current_piece.column += 1
-                        move_counter = 0
-                elif key[pygame.K_LEFT] or key[pygame.K_a]:
-                    if move_counter > move_speed and c_left is True:
-                        current_piece.column -= 1
-                        move_counter = 0
+                        # print(current_piece.column, current_piece.row)
+                        # print(current_piece.check_left(), current_piece.check_right())
+                        falling = 0
 
-                if falling / speed > 0.1 and is_down is False:
-                    current_piece.row += 1
-                    # print(current_piece.column, current_piece.row)
-                    # print(current_piece.check_left(), current_piece.check_right())
-                    falling = 0
         elif game_over_clicked is True:
             # GAME OVER WINDOW
-            screen.fill((192, 192, 192))
+            screen.fill(background_color)
             screen.blit(background_image, (0, 0))
             # draw - "GAME OVER"
             font = pygame.font.SysFont('arial', 60)
@@ -304,7 +398,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 start_clicked = False
                 creator_clicked = False
                 options_clicked = False
-                about_clicked = False
+                controls_clicked = False
                 grid_.clear_grid()  # clean everything
                 score_.game_score = 0  # reset score
                 game_over_clicked = False

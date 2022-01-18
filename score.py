@@ -1,9 +1,9 @@
 import pygame
 
 class Score(object):
-    def __init__(self, high_score, screen, board_height, board_width):
+    def __init__(self, lines, screen, board_height, board_width):
         self.game_score = 0
-        self.high_score = high_score
+        self.lines = lines
         self.points = 10
         self.bonus = 0
         self.screen = screen
@@ -17,3 +17,9 @@ class Score(object):
         font = pygame.font.SysFont('arial',  text_size)
         score_text = font.render(text, True, font_color)
         self.screen.blit(score_text, (x, y))
+
+        text = "LINES: "
+        add = str(self.lines)
+        text = text + add
+        lines_text = font.render(text, True, font_color)
+        self.screen.blit(lines_text, (x, y + 40))

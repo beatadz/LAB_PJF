@@ -168,6 +168,7 @@ class Piece(object):
             if count == self.columns:
                 empty.append(i)
                 self.g_score.game_score += self.g_score.points
+                self.g_score.lines += 1
                 for k in range(self.columns):
                     self.grid.grid_colors[i][k] = self.grid.main_color
 
