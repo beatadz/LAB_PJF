@@ -1,3 +1,4 @@
+#Beata Dziewulska WCY19IJ1S1
 import pygame
 import shapes
 import piece
