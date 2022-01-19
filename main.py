@@ -24,11 +24,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     move_counter = 0
     running = True
     falling = clock.tick(FPS)
-    start_clicked = False
-    creator_clicked = False
-    options_clicked = False
-    controls_clicked = False
-    game_over_clicked = False
+    start_clicked = creator_clicked = options_clicked = controls_clicked = game_over_clicked = False
     boxes = []
     show = True
     pause = False
@@ -36,8 +32,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     new_shapes_count = 0
     background_color = (192, 192, 192)
     time = pygame.time.Clock().tick(1000)
-    # IMAGES
 
+    # IMAGES
     background_image = pygame.image.load("resources/background.png")
 
     blue_button_image = pygame.image.load("resources/blue_button.png")
@@ -134,7 +130,6 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         if key[pygame.K_m]: # chwilowo
             start_clicked = True
 
-
         # MAIN WINDOW
         tetris_title = pygame.image.load("resources/Tetris.png")
         tetris_title = pygame.transform.scale(tetris_title, (screen_width - 200, 131))
@@ -198,8 +193,9 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                     boxes[i].update_checkbox()
                     if boxes[i].checked is True:
                         selected_color = boxes[i].check_color
-                        for j in range(i):
-                            boxes[j].checked = False
+                        for j in range(len(boxes)):
+                            if j != i:
+                                boxes[j].checked = False
 
             # draw creator grid
             grid_.draw_creator_grid(selected_color)
@@ -258,7 +254,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                     background_color = (64, 64, 64)
                 else:
                     background_color = (192, 192, 192)
-                dark_mode_button.color = rotation_button.color = dark_mode_button.text_background = rotation_button.text_background = show_next_shape_button.color = show_next_shape_button.text_background = background_color
+                dark_mode_button.color = rotation_button.color =  show_next_shape_button.color = background_color
+                dark_mode_button.text_background = rotation_button.text_background = show_next_shape_button.text_background = background_color
                 if rotation_button.checked is True:
                     rotate = not rotate
                 if show_next_shape_button.checked is True:
@@ -267,7 +264,6 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                     show = False
             # BACK BUTTON
             back3_button.create_button()
-
             if back3_button.click_check() is True:
                 start_clicked = False
                 creator_clicked = False

@@ -13,13 +13,15 @@ class Score(object):
     def display_score(self, font_color, text_size, x, y):
         text = "SCORE: "
         add = str(self.game_score)
+        font = pygame.font.SysFont('arial', text_size)
+        text_width, text_height = font.size(add)
         text = text + add
-        font = pygame.font.SysFont('arial',  text_size)
         score_text = font.render(text, True, font_color)
-        self.screen.blit(score_text, (x, y))
+        self.screen.blit(score_text, (x - text_width/2, y))
 
         text = "LINES: "
         add = str(self.lines)
+        text_width, text_height = font.size(add)
         text = text + add
         lines_text = font.render(text, True, font_color)
-        self.screen.blit(lines_text, (x, y + 40))
+        self.screen.blit(lines_text, (x - text_width/2, y + text_size + 10))

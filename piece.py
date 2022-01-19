@@ -49,40 +49,80 @@ class Piece(object):
         for a in range(s_column):
             if x[nr][0][a] == '0':
                 count += 1
+
+        if shapes.shapes.index(x) > 6:
+            if len(self.column_row) < len(shapes.colors[shapes.shapes.index(x) - 7]):
+                for m in range(len(shapes.colors[shapes.shapes.index(x) - 7]) - len(self.column_row)):
+                    self.column_row.append((1,1))
+            elif len(self.column_row) > len(shapes.colors[shapes.shapes.index(x) - 7]):
+                for m in range(len(self.column_row) - len(shapes.colors[shapes.shapes.index(x) - 7])):
+                    del self.column_row[-1]
+        else:
+            if len(self.column_row) > 4:
+                for n in range(0, len(self.column_row) - 4):
+                    del self.column_row[-1]
+            elif len(self.column_row) < 4:
+                for n in range(0, 4 - len(self.column_row)):
+                    self.column_row.append((1,1))
+
+        if shapes.shapes.index(self.next_shape) > 6:
+            if len(self.next_column_row) < len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]):
+                for m in range(len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]) - len(self.next_column_row)):
+                    self.next_column_row.append((1,1))
+            elif len(self.next_column_row) > len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]):
+                for m in range(len(self.next_column_row) - len(shapes.colors[shapes.shapes.index(self.next_shape) - 7])):
+                    del self.next_column_row[-1]
+        else:
+            if len(self.next_column_row) > 4:
+                for n in range(0, len(self.next_column_row) - 4):
+                    del self.next_column_row[-1]
+            elif len(self.next_column_row) < 4:
+                for n in range(0, 4 - len(self.next_column_row)):
+                    self.next_column_row.append((1,1))
+
+        #print(self.column_row, self.next_column_row)
+
         #if count == 4:
             #j = 1
         # ACTUAL SHAPE
         while j < s_row:
             while k < s_column:
                 if x[nr][j][k] == '1':
-                    if count == 4:
-                        pygame.draw.rect(self.screen, self.color, [self.line_thickness + ((self.column + k) * self.block_side),
-                                                                   self.line_thickness + ((self.row + j - 1) * self.block_side),
-                                                                   self.block_side, self.block_side], 0)
-                        self.column_row[i] = self.column + k, self.row + j
-                    else:
-                        pygame.draw.rect(self.screen, self.color,
+                    if shapes.shapes.index(x) > 6:
+                        pygame.draw.rect(self.screen, shapes.new_colors[shapes.shapes.index(x) - 7][j][k],
                                          [self.line_thickness + ((self.column + k) * self.block_side),
-                                          self.line_thickness + ((self.row + j) * self.block_side),
+                                          self.line_thickness + ((self.row + j - 1) * self.block_side),
                                           self.block_side, self.block_side], 0)
                         self.column_row[i] = self.column + k, self.row + j
-
+                    else:
+                        if count == 4:
+                            pygame.draw.rect(self.screen, self.color, [self.line_thickness + ((self.column + k) * self.block_side),
+                                                                       self.line_thickness + ((self.row + j - 1) * self.block_side),
+                                                                       self.block_side, self.block_side], 0)
+                            self.column_row[i] = self.column + k, self.row + j
+                        else:
+                            pygame.draw.rect(self.screen, self.color,
+                                             [self.line_thickness + ((self.column + k) * self.block_side),
+                                              self.line_thickness + ((self.row + j) * self.block_side),
+                                              self.block_side, self.block_side], 0)
+                            self.column_row[i] = self.column + k, self.row + j
                     i += 1
                 k += 1
             j += 1
             k = 0
 
         j = k = i = 0
+        y = self.next_shape
 
         # NEXT SHAPE
         while j < s_row:
             while k < s_column:
                 if nr < 3:
-                    if x[nr + 1][j][k] == '1':
+                    if y[nr + 1][j][k] == '1':
                         self.next_column_row[i] = self.column + k, self.row + j
                         i += 1
                 else:
-                    if x[0][j][k] == '1':
+                    if y[0][j][k] == '1':
                         self.next_column_row[i] = self.column + k, self.row + j
                         i += 1
                 k += 1
@@ -121,18 +161,18 @@ class Piece(object):
 
         if end is False and self.stop is True:
             self.checked = 0
-            #print(self.column_row)
+            # print(self.column_row)
             for x in self.column_row:
                 self.grid.grid_colors[x[1]][x[0]] = c
-                #print(x[1], x[0])
-                self.column = 4
-                self.row = 0
-                self.color = self.next_color
-                self.shape = self.next_shape
+                # print(x[1], x[0])
+            self.column = 4
+            self.row = 0
+            self.color = self.next_color
+            self.shape = self.next_shape
 
-                #self.shape = shapes.shapes[0] # - do testów
-                if self.shape == shapes.S2:
-                    self.column += 1
+            # self.shape = shapes.shapes[0] # - do testów
+            if self.shape == shapes.S2:
+                self.column += 1
 
         return end
 
@@ -196,10 +236,16 @@ class Piece(object):
         while j < s_row:
             while k < s_column:
                 if x[0][j][k] == '1':
-                    pygame.draw.rect(self.screen, self.next_color,
-                                     [self.line_thickness + (k * self.block_side) + start_drawing,
-                                      self.line_thickness + (j * self.block_side) + 200,
-                                      self.block_side, self.block_side], 0)
+                    if shapes.shapes.index(x) > 6:
+                        pygame.draw.rect(self.screen, shapes.new_colors[shapes.shapes.index(x) - 7][j][k],
+                                         [self.line_thickness + (k * self.block_side) + start_drawing,
+                                          self.line_thickness + (j * self.block_side) + 200,
+                                          self.block_side, self.block_side], 0)
+                    else:
+                        pygame.draw.rect(self.screen, self.next_color,
+                                         [self.line_thickness + (k * self.block_side) + start_drawing,
+                                          self.line_thickness + (j * self.block_side) + 200,
+                                          self.block_side, self.block_side], 0)
                     i += 1
                 k += 1
             j += 1
