@@ -21,7 +21,6 @@ class Grid(object):
             for j in range(0, self.rows):
                 c_r = i, j
                 self.column_row.append(c_r)
-                # print(grid.column_row)
 
         self.grid_colors = [[self.main_color for x in range(self.columns)] for y in range(self.rows)]
         self.select = [[self.main_color for x in range(4)] for y in range(4)]
@@ -58,7 +57,6 @@ class Grid(object):
                     pygame.draw.rect(self.screen, self.select[j][i], rect, 0)
                 # get mouse position
                 pos = pygame.mouse.get_pos()
-
                 # check mouseover and clicked conditions
                 if rect.collidepoint(pos) and self.count < self.max:
                     if pygame.mouse.get_pressed()[0] == 1:
@@ -66,13 +64,10 @@ class Grid(object):
                             self.count += 1
                             self.select[j][i] = selected_color
 
-                #pygame.draw.rect(self.screen, self.main_color, rect, 1)
-
     def clear_creator_grid(self, checkboxes):
         for i in range(0, 4):
             for j in range(0, 4):
                 self.select[j][i] = self.main_color
-
                 self.count = 0
                 for box in checkboxes:
                     box.checked = False

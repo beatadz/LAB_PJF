@@ -125,9 +125,9 @@ shape_colors = [(255, 135, 0), (154,205,50), (0,206,209), (147,112,219), (255,10
 new_colors = []
 colors = []
 
-def display_next(screen, board_width):
+def display_next(screen, board_width, text_color):
     text = "NEXT: "
-    font_color = (0, 0, 0)
+    font_color = text_color
     font = pygame.font.SysFont('arial', 30)
     score_text = font.render(text, True, font_color)
     screen.blit(score_text, (board_width + 20, 150))

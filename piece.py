@@ -29,6 +29,7 @@ class Piece(object):
         self.checked = 0
 
     def draw_shape(self):
+        # nr - position, j - row, k - column, i - index of column_row
         i = j = k = count = 0
         s_row = s_column = 4
         nr = self.rotation
@@ -39,9 +40,6 @@ class Piece(object):
             self.next_color = shapes.shape_colors[random.randint(0, len(shapes.shape_colors) - 1)]
             self.next_shape = random.choice(shapes.shapes)
             self.checked = 1
-
-        # nr - position, j - row, k - column, i - index of column_row
-        # print(current_piece.shape)
 
         x = self.shape
 
@@ -80,10 +78,6 @@ class Piece(object):
                 for n in range(0, 4 - len(self.next_column_row)):
                     self.next_column_row.append((1,1))
 
-        #print(self.column_row, self.next_column_row)
-
-        #if count == 4:
-            #j = 1
         # ACTUAL SHAPE
         while j < s_row:
             while k < s_column:
@@ -161,19 +155,17 @@ class Piece(object):
 
         if end is False and self.stop is True:
             self.checked = 0
-            # print(self.column_row)
             for x in self.column_row:
                 if shapes.shapes.index(self.shape) > 6:
                     self.grid.grid_colors[x[1]][x[0]] = shapes.colors[shapes.shapes.index(self.shape) - 7][self.column_row.index(x)]
                 else:
                     self.grid.grid_colors[x[1]][x[0]] = c
-                # print(x[1], x[0])
+
             self.column = 4
             self.row = 0
             self.color = self.next_color
             self.shape = self.next_shape
 
-            # self.shape = shapes.shapes[0] # - do testów
             if self.shape == shapes.S2:
                 self.column += 1
 
@@ -187,7 +179,6 @@ class Piece(object):
 
     def check_rotation(self):
         end = True
-        #print(self.next_column_row)
         for x in self.next_column_row:
             if x[0] >= self.columns:
                 end = False
@@ -222,7 +213,6 @@ class Piece(object):
         for empty_row in self.empty:
             r = empty_row
             while r >= 1:
-                #print(r)
                 for c in range(self.columns):
                     if self.grid.grid_colors[r][c] != self.grid.main_color or r == empty_row:
                         self.grid.grid_colors[r][c] = self.grid.grid_colors[r-1][c]
@@ -233,7 +223,6 @@ class Piece(object):
         i = j = k = 0
         s_row = s_column = 4
         # nr - position, j - row, k - column, i - index of column_row
-        # print(current_piece.shape)
         x = self.next_shape
         # ACTUAL SHAPE
         while j < s_row:

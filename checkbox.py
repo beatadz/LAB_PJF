@@ -18,19 +18,14 @@ class Checkbox:
         self.text_background = text_background
         self.checkbox_size = 15
         self.time = pygame.time.Clock().tick(1000)
-
+        self.checked = False
         # checkbox object
         self.checkbox_obj = pygame.Rect(self.x, self.y, self.checkbox_size, self.checkbox_size)
         self.checkbox_outline = self.checkbox_obj.copy()
 
-        # variables to test the different states of the checkbox
-        self.checked = False
-
         self.rectangle = pygame.Rect(self.checkbox_obj)
 
     def draw_button_text(self):
-        #self.font = pygame.font.SysFont(self.font, self.font_size)
-        #width, height = self.font.size(self.text)
         font_position = (self.x + self.checkbox_size + 10, self.y - 4)
         self.screen.blit(self.font.render(self.text, True, self.font_color, self.text_background), font_position)
 
@@ -56,4 +51,3 @@ class Checkbox:
                     self.checked = True
                 elif self.checked:
                     self.checked = False
-
