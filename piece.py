@@ -163,7 +163,10 @@ class Piece(object):
             self.checked = 0
             # print(self.column_row)
             for x in self.column_row:
-                self.grid.grid_colors[x[1]][x[0]] = c
+                if shapes.shapes.index(self.shape) > 6:
+                    self.grid.grid_colors[x[1]][x[0]] = shapes.colors[shapes.shapes.index(self.shape) - 7][self.column_row.index(x)]
+                else:
+                    self.grid.grid_colors[x[1]][x[0]] = c
                 # print(x[1], x[0])
             self.column = 4
             self.row = 0

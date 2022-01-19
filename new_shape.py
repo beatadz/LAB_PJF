@@ -28,14 +28,14 @@ class NewShape(object):
             self.row = ""
         else:
             shapes.new_colors.append(self.new_shapes_colors)
-            print(shapes.new_colors)
+            #print(shapes.new_colors)
             for i in range(0, 4): # na razie bez obracania
                 self.full_shape.append(self.shape)
-            print(self.full_shape)
+            #print(self.full_shape)
             if shapes.shapes.count(self.full_shape) == 0:
-                print("NIE MA")
+                #print("NIE MA")
                 shapes.shapes.append(self.full_shape)
-            print(shapes.shapes.index(self.full_shape))
+            #print(shapes.shapes.index(self.full_shape))
             shapes.colors.append(self.colors)
-            print(shapes.colors)
+            #print(shapes.colors)
         return empty
