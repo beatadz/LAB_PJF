@@ -85,6 +85,7 @@ class NewShape(object):
                                         self.correct = False
                         if self.check_r is True:
                             self.correct = False
+
                 if empty is False and self.correct is True:
                     print("saved")
                 else:

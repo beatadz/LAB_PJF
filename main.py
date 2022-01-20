@@ -19,6 +19,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     clock = pygame.time.Clock()
     FPS = 60
     speed = 3000
+    max_speed = 3000
     move_speed = 2
     rotation_speed = 10
     rotation_counter = 0
@@ -292,7 +293,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 grid_.draw_small_grid()  # draw grid for next shape
                 current_piece.draw_next_shape() # draw next shape
                 shapes.display_next(screen, board_width, text_color)  # display "next"
-            score_.display_score(text_color, 30, board_width + 20, 0) # display game score
+            score_.display_score(text_color, 30, board_width + 20, 0, 1) # display game score
 
             if pause is True:
                 image_width, image_height = pause_image.get_size()
@@ -312,6 +313,26 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 # check if there is any full or empty line
                 current_piece.check_full_line()
                 current_piece.fix_empty_lines()
+
+                # speed depends on lines
+                if score_.lines > 0 and score_.lines % 2 == 0 and score_.previous_line != score_.lines:
+                    if speed > 0:
+                        if speed >= (speed * 2/3):
+                            speed -= 400
+                        elif speed >= (speed * 1/3):
+                            speed -= 150
+                        else:
+                            speed -= 50
+                    print(speed)
+                    score_.previous_line = score_.lines
+
+                # draw - "SPEED"
+                font = pygame.font.SysFont('arial', 30)
+                text = "SPEED: "
+                add = str(max_speed - speed + 10)
+                text = text + add
+                speed_text = font.render(text, True, text_color)
+                screen.blit(speed_text, (board_width + 20, 80))
 
                 # KEYBOARD
                 if key[pygame.K_SPACE]:
@@ -357,7 +378,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             quit2_button.create_button()
             font = pygame.font.SysFont('arial', 50)
             text_width, text_height = font.size("SCORE: ")
-            score_.display_score(text_color, 50, screen_width / 2 - text_width / 2, screen_height / 2 - 200)  # display game score
+            score_.display_score(text_color, 50, screen_width / 2 - text_width / 2, screen_height / 2 - 200, 0)  # display game score
             # check if user wants to start the game
             if play_again_button.click_check() is True:
                 grid_.clear_grid() # clean everything
