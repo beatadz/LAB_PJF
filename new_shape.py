@@ -89,7 +89,7 @@ class NewShape(object):
                                         and grid.select[i - 1][j - 1] == grid.main_color:
                                     self.correct = False
 
-                print(self.check_r, i, j)
+                #print(self.check_r, i, j)
                 if self.check_r is True:
                     self.correct = False
                 #print(r)

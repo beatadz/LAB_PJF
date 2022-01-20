@@ -184,7 +184,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 #incorrect = not incorrect
                 new = new_shape.NewShape(grid_)
                 empty = new.save_shape(grid_, new_shapes_count)
-                print(empty)
+                #print(empty)
                 # draw - "SAVED"
                 if empty is False:
                     saved = True
