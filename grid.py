@@ -61,8 +61,10 @@ class Grid(object):
                 if rect.collidepoint(pos) and self.count < self.max:
                     if pygame.mouse.get_pressed()[0] == 1:
                         if selected_color != 0 and self.select[j][i] != selected_color:
-                            self.count += 1
+                            if self.select[j][i] != selected_color and self.select[j][i] == self.main_color:
+                                self.count += 1
                             self.select[j][i] = selected_color
+
 
     def clear_creator_grid(self, checkboxes):
         for i in range(0, 4):

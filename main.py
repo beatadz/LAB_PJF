@@ -35,6 +35,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     text_color = (0, 0, 0)
     time = pygame.time.Clock().tick(1000)
     gap = 80
+    saved = False
 
     # IMAGES
     background_image = pygame.image.load("resources/background.png")
@@ -172,17 +173,22 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             clear_button.create_button()
             if clear_button.click_check() is True:
                 grid_.clear_creator_grid(boxes)
+                saved = False
             # add save button
             save_button.create_button()
             if save_button.click_check() is True and start_clicked is False:
+                saved = not saved
                 new = new_shape.NewShape(grid_)
                 empty = new.save_shape(grid_, new_shapes_count)
+                print(empty)
                 # draw - "SAVED"
                 if empty is False:
+                    saved = True
                     new_shapes_count += 1
-                    font = pygame.font.SysFont('arial', 30)
-                    color_text = font.render("SAVED", True, text_color)
-                    screen.blit(color_text, (150, 500))
+            if saved is True:
+                font = pygame.font.SysFont('arial', 50)
+                color_text = font.render("SAVED", True, text_color)
+                screen.blit(color_text, (133, 510))
             # add back button
             back_button.create_button()
             if back_button.click_check() is True:
