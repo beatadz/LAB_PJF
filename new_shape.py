@@ -29,6 +29,7 @@ class NewShape(object):
                     self.row = self.row + "0"
             self.shape.append(self.row)
         if empty is True:
+            self.check_r = False
             self.shape.clear()
             self.row = ""
         else:
@@ -44,47 +45,77 @@ class NewShape(object):
                 for i in range(0, 4):
                     self.check_r = True
                     for j in range(0, 4):
-                        self.check_c = True
                         if self.count > 1:
-
                             if 0 < i < 4:
                                 r = 0
                                 if 0 < j < 3:
+                                    for k in range(0, i):
+                                        for l in range(0, 4):
+                                            if grid.select[i][j] != grid.main_color:
+                                                r = 1
                                     if r > 0:
                                         if grid.select[i][j] != grid.main_color and not (grid.select[i - 1][j] == grid.main_color
                                                                                          and grid.select[i - 1][j - 1] == grid.main_color
                                                                                          and grid.select[i - 1][j + 1] == grid.main_color):
+
                                             self.check_r = False
-                            if 0 < i < 3:
-                                for k in range(0, i - 1):
-                                    for l in range(0, 4):
-                                        if grid.select[i][j] != grid.main_color:
-                                            r = 1
-                                if 0 < j < 3:
-                                    if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i + 1][j] == grid.main_color \
-                                            and grid.select[i][j - 1] == grid.main_color and grid.select[i][j + 1] == grid.main_color and grid.select[i + 1][j + 1] == grid.main_color\
-                                            and grid.select[i - 1][j - 1] == grid.main_color and grid.select[i - 1][j + 1] == grid.main_color and grid.select[i + 1][j - 1] == grid.main_color:
-                                        self.correct = False
+                                    else:
+                                        self.check_r = False
+                                else:
+                                    for k in range(0, i):
+                                        for l in range(0, 4):
+                                            if grid.select[i][j] != grid.main_color:
+                                                r = 1
+                                    if r > 0:
+                                        if j == 3:
+                                            if grid.select[i][j] != grid.main_color and not (grid.select[i - 1][j] == grid.main_color
+                                                                                             and grid.select[i - 1][j - 1] == grid.main_color):
+                                                self.check_r = False
+                                        if j == 0:
+                                            if grid.select[i][j] != grid.main_color and not (grid.select[i - 1][j] == grid.main_color
+                                                                                             and grid.select[i - 1][j + 1] == grid.main_color):
+                                                self.check_r = False
+                                    else:
+                                        self.check_r = False
+
+                                if 0 < i < 3:
+                                    if 0 < j < 3:
+                                        if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i + 1][j] == grid.main_color \
+                                                and grid.select[i][j - 1] == grid.main_color and grid.select[i][j + 1] == grid.main_color and grid.select[i + 1][j + 1] == grid.main_color\
+                                                and grid.select[i - 1][j - 1] == grid.main_color and grid.select[i - 1][j + 1] == grid.main_color and grid.select[i + 1][j - 1] == grid.main_color:
+                                            self.correct = False
+                                            #print(i, j)
                             elif i == 0:
+                                self.check_r = False
                                 if j == 0:
                                     if grid.select[i][j] != grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j + 1] == grid.main_color \
                                             and grid.select[i + 1][j + 1] == grid.main_color:
                                         self.correct = False
+                                        #print(i, j)
                                 elif j == 3:
                                     if grid.select[i][j] != grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color \
                                             and grid.select[i + 1][j - 1] == grid.main_color:
                                         self.correct = False
+                                        #print(i, j)
                             elif i == 3:
+                                self.check_r = False
                                 if j == 0:
                                     if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i][j + 1] == grid.main_color \
                                             and grid.select[i - 1][j + 1] == grid.main_color:
                                         self.correct = False
+                                        #print(i, j)
                                 if j == 3:
                                     if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color \
                                             and grid.select[i - 1][j - 1] == grid.main_color:
                                         self.correct = False
-                        if self.check_r is True:
-                            self.correct = False
+                                        #print(i, j)
+
+                            print(self.check_r, i, j)
+
+                            if self.check_r is True:
+                                self.correct = False
+                        else:
+                            self.check_r = False
 
                 if empty is False and self.correct is True:
                     print("saved")

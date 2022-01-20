@@ -25,6 +25,7 @@ class Button(object):
         button_text = font.render(self.text, True, self.text_color)
         text_width, text_height = font.size(self.text)
         self.screen.blit(button_text, (self.x + self.width/2 - text_width/2, self.y + self.height/2 - text_height/2))
+        self.rect = pygame.Rect(self.x + self.width/2 - text_width/2, self.y + self.height/2 - text_height/2, self.width, self.height)
 
     def click_check(self):
         action = False

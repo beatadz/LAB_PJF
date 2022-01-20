@@ -37,6 +37,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     time = pygame.time.Clock().tick(1000)
     gap = 80
     saved = False
+    incorrect = False
 
     # IMAGES
     background_image = pygame.image.load("resources/background.png")
@@ -175,10 +176,12 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             if clear_button.click_check() is True:
                 grid_.clear_creator_grid(boxes)
                 saved = False
+                incorrect = False
             # add save button
             save_button.create_button()
             if save_button.click_check() is True and start_clicked is False:
                 saved = not saved
+                #incorrect = not incorrect
                 new = new_shape.NewShape(grid_)
                 empty = new.save_shape(grid_, new_shapes_count)
                 print(empty)
@@ -188,10 +191,19 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                     new_shapes_count += 1
                 else:
                     saved = False
+
+                if new.correct is False:
+                    incorrect = True
+
             if saved is True:
                 font = pygame.font.SysFont('arial', 50)
-                color_text = font.render("SAVED", True, text_color)
-                screen.blit(color_text, (133, 510))
+                saved_text = font.render("SAVED", True, text_color)
+                screen.blit(saved_text, (133, 510))
+            elif incorrect is True:
+                font = pygame.font.SysFont('arial', 30)
+                incorrect_text = font.render("INCORRECT SHAPE", True, text_color)
+                screen.blit(incorrect_text, (80, 510))
+
             # add back button
             back_button.create_button()
             if back_button.click_check() is True:
@@ -231,9 +243,14 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 if dark_mode_button.checked is True:
                     background_color = (64, 64, 64)
                     text_color = (255, 255, 255)
+                    frame_color = (255, 255, 255)
+                    controls_image = pygame.image.load("resources/controls3.png")
                 else:
                     background_color = (192, 192, 192)
                     text_color = (0, 0, 0)
+                    frame_color = (0, 0, 0)
+                    controls_image = pygame.image.load("resources/controls2.png")
+
                 dark_mode_button.color = rotation_button.color =  show_next_shape_button.color = background_color
                 dark_mode_button.text_background = rotation_button.text_background = show_next_shape_button.text_background = background_color
                 dark_mode_button.font_color = rotation_button.font_color = show_next_shape_button.font_color = text_color
