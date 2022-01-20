@@ -14,6 +14,86 @@ class NewShape(object):
 
         self.count = 0
 
+    def check_new_shape(self, grid):
+        empty_column = [True, True, True, True]
+
+        for j in range(0, 4):
+            for l in range(0, 4):
+                if grid.select[j][l] != grid.main_color:
+                    empty_column[l] = False
+
+        if empty_column[1] is True and empty_column[2] is True and empty_column[0] is False and empty_column[3] is False:
+            self.correct = False
+        elif empty_column[1] is True and empty_column[2] is False and empty_column[0] is False and empty_column[3] is False:
+            self.correct = False
+        elif empty_column[2] is True and empty_column[3] is False and empty_column[0] is False and empty_column[1] is False:
+            self.correct = False
+
+        # check empty spaces between blocks
+        if self.count > 1:
+            for i in range(0, 4):
+                self.check_r = True
+                r = 0
+                empty_row = True
+                for k in range(0, i):
+                    for l in range(0, 4):
+                        if grid.select[k][l] != grid.main_color:
+                            r = 1
+                for l in range(0, 4):
+                    if grid.select[i][l] != grid.main_color:
+                        empty_row = False
+
+                if empty_row is True:
+                    self.check_r = False
+
+                for j in range(0, 4):
+                    if i == 0:
+                        self.check_r = False
+                    else:
+                        if 0 < j < 3:
+                            if r > 0:
+                                if grid.select[i][j] != grid.main_color and (
+                                        grid.select[i - 1][j] != grid.main_color
+                                        or grid.select[i - 1][j - 1] != grid.main_color
+                                        or grid.select[i - 1][j + 1] != grid.main_color):
+
+                                    self.check_r = False
+
+                            else:
+                                self.check_r = False
+                        else:
+                            if r > 0:
+                                if j == 3:
+                                    if grid.select[i][j] != grid.main_color and (
+                                            grid.select[i - 1][j] != grid.main_color
+                                            or grid.select[i - 1][j - 1] != grid.main_color):
+                                        self.check_r = False
+                                elif j == 0:
+                                    if grid.select[i][j] != grid.main_color and (
+                                            grid.select[i - 1][j] != grid.main_color
+                                            or grid.select[i - 1][j + 1] != grid.main_color):
+                                        self.check_r = False
+                            else:
+                                self.check_r = False
+
+                        if i == 3:
+                            if j == 0:
+                                if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and \
+                                        grid.select[i][j + 1] == grid.main_color \
+                                        and grid.select[i - 1][j + 1] == grid.main_color:
+                                    self.correct = False
+                                    # print(i, j)
+                            if j == 3:
+                                if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and \
+                                        grid.select[i][j - 1] == grid.main_color \
+                                        and grid.select[i - 1][j - 1] == grid.main_color:
+                                    self.correct = False
+
+                print(self.check_r, i, j)
+                if self.check_r is True:
+                    self.correct = False
+                #print(r)
+
     def save_shape(self, grid, nr):
         empty = True
         for i in range(0, 4):
@@ -37,85 +117,12 @@ class NewShape(object):
 
             for i in range(0, 4):
                 self.full_shape.append(self.shape)
-            #print(self.full_shape, shapes.shapes.count(self.full_shape))
+
             if shapes.shapes.count(self.full_shape) == 0:
                 shapes.shapes.append(self.full_shape)
                 shapes.colors.append(self.colors)
-                # check if there are empty spaces between blocks
-                for i in range(0, 4):
-                    self.check_r = True
-                    for j in range(0, 4):
-                        if self.count > 1:
-                            if 0 < i < 4:
-                                r = 0
-                                if 0 < j < 3:
-                                    for k in range(0, i):
-                                        for l in range(0, 4):
-                                            if grid.select[i][j] != grid.main_color:
-                                                r = 1
-                                    if r > 0:
-                                        if grid.select[i][j] != grid.main_color and not (grid.select[i - 1][j] == grid.main_color
-                                                                                         and grid.select[i - 1][j - 1] == grid.main_color
-                                                                                         and grid.select[i - 1][j + 1] == grid.main_color):
 
-                                            self.check_r = False
-                                    else:
-                                        self.check_r = False
-                                else:
-                                    for k in range(0, i):
-                                        for l in range(0, 4):
-                                            if grid.select[i][j] != grid.main_color:
-                                                r = 1
-                                    if r > 0:
-                                        if j == 3:
-                                            if grid.select[i][j] != grid.main_color and not (grid.select[i - 1][j] == grid.main_color
-                                                                                             and grid.select[i - 1][j - 1] == grid.main_color):
-                                                self.check_r = False
-                                        if j == 0:
-                                            if grid.select[i][j] != grid.main_color and not (grid.select[i - 1][j] == grid.main_color
-                                                                                             and grid.select[i - 1][j + 1] == grid.main_color):
-                                                self.check_r = False
-                                    else:
-                                        self.check_r = False
-
-                                if 0 < i < 3:
-                                    if 0 < j < 3:
-                                        if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i + 1][j] == grid.main_color \
-                                                and grid.select[i][j - 1] == grid.main_color and grid.select[i][j + 1] == grid.main_color and grid.select[i + 1][j + 1] == grid.main_color\
-                                                and grid.select[i - 1][j - 1] == grid.main_color and grid.select[i - 1][j + 1] == grid.main_color and grid.select[i + 1][j - 1] == grid.main_color:
-                                            self.correct = False
-                                            #print(i, j)
-                            elif i == 0:
-                                self.check_r = False
-                                if j == 0:
-                                    if grid.select[i][j] != grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j + 1] == grid.main_color \
-                                            and grid.select[i + 1][j + 1] == grid.main_color:
-                                        self.correct = False
-                                        #print(i, j)
-                                elif j == 3:
-                                    if grid.select[i][j] != grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color \
-                                            and grid.select[i + 1][j - 1] == grid.main_color:
-                                        self.correct = False
-                                        #print(i, j)
-                            elif i == 3:
-                                self.check_r = False
-                                if j == 0:
-                                    if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i][j + 1] == grid.main_color \
-                                            and grid.select[i - 1][j + 1] == grid.main_color:
-                                        self.correct = False
-                                        #print(i, j)
-                                if j == 3:
-                                    if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color \
-                                            and grid.select[i - 1][j - 1] == grid.main_color:
-                                        self.correct = False
-                                        #print(i, j)
-
-                            print(self.check_r, i, j)
-
-                            if self.check_r is True:
-                                self.correct = False
-                        else:
-                            self.check_r = False
+                self.check_new_shape(grid)
 
                 if empty is False and self.correct is True:
                     print("saved")
