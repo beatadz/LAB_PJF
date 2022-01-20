@@ -31,9 +31,34 @@ class NewShape(object):
 
             for i in range(0, 4):
                 self.full_shape.append(self.shape)
-            print(self.full_shape, shapes.shapes.count(self.full_shape))
+            #print(self.full_shape, shapes.shapes.count(self.full_shape))
             if shapes.shapes.count(self.full_shape) == 0:
                 shapes.shapes.append(self.full_shape)
                 shapes.colors.append(self.colors)
-                print("saved")
+                # check if there are empty spaces between blocks
+                for i in range(0, 4):
+                    for j in range(0, 4):
+                        if 0 < i < 3:
+                            if 0 < j < 3:
+                                if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color and grid.select[i][j + 1] == grid.main_color:
+                                    empty = True
+                        elif i == 0:
+                            if j == 0:
+                                if grid.select[i][j] != grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j + 1] == grid.main_color:
+                                    empty = True
+                            elif j == 3:
+                                if grid.select[i][j] != grid.main_color and grid.select[i + 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color:
+                                    empty = True
+                        elif i == 3:
+                            if j == 0:
+                                if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i][j + 1] == grid.main_color:
+                                    empty = True
+                            if j == 0:
+                                if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and grid.select[i][j - 1] == grid.main_color:
+                                    empty = True
+
+                if empty is False:
+                    print("saved")
+            else:
+                empty = True
         return empty

@@ -185,6 +185,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 if empty is False:
                     saved = True
                     new_shapes_count += 1
+                else:
+                    saved = False
             if saved is True:
                 font = pygame.font.SysFont('arial', 50)
                 color_text = font.render("SAVED", True, text_color)
