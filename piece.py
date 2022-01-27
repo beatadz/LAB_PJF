@@ -64,12 +64,13 @@ class Piece(object):
                     self.column_row.append((1,1))
 
         if shapes.shapes.index(self.next_shape) > 6:
-            if len(self.next_column_row) < len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]):
-                for m in range(len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]) - len(self.next_column_row)):
-                    self.next_column_row.append((1,1))
-            elif len(self.next_column_row) > len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]):
-                for m in range(len(self.next_column_row) - len(shapes.colors[shapes.shapes.index(self.next_shape) - 7])):
-                    del self.next_column_row[-1]
+            if shapes.colors:
+                if len(self.next_column_row) < len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]):
+                    for m in range(len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]) - len(self.next_column_row)):
+                        self.next_column_row.append((1,1))
+                elif len(self.next_column_row) > len(shapes.colors[shapes.shapes.index(self.next_shape) - 7]):
+                    for m in range(len(self.next_column_row) - len(shapes.colors[shapes.shapes.index(self.next_shape) - 7])):
+                        del self.next_column_row[-1]
         else:
             if len(self.next_column_row) > 4:
                 for n in range(0, len(self.next_column_row) - 4):

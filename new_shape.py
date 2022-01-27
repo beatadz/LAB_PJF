@@ -1,4 +1,3 @@
-import pygame
 import shapes
 
 class NewShape(object):
@@ -27,6 +26,9 @@ class NewShape(object):
         elif empty_column[1] is True and empty_column[2] is False and empty_column[0] is False and empty_column[3] is False:
             self.correct = False
         elif empty_column[2] is True and empty_column[3] is False and empty_column[0] is False and empty_column[1] is False:
+            self.correct = False
+
+        if grid.select[1][1] == grid.main_color and grid.select[1][2] == grid.main_color and grid.select[2][1] == grid.main_color and grid.select[2][2] == grid.main_color:
             self.correct = False
 
         # check empty spaces between blocks
@@ -82,17 +84,13 @@ class NewShape(object):
                                         grid.select[i][j + 1] == grid.main_color \
                                         and grid.select[i - 1][j + 1] == grid.main_color:
                                     self.correct = False
-                                    # print(i, j)
                             if j == 3:
                                 if grid.select[i][j] != grid.main_color and grid.select[i - 1][j] == grid.main_color and \
                                         grid.select[i][j - 1] == grid.main_color \
                                         and grid.select[i - 1][j - 1] == grid.main_color:
                                     self.correct = False
-
-                #print(self.check_r, i, j)
                 if self.check_r is True:
                     self.correct = False
-                #print(r)
 
     def save_shape(self, grid, nr):
         empty = True
@@ -112,6 +110,9 @@ class NewShape(object):
             self.check_r = False
             self.shape.clear()
             self.row = ""
+            del (shapes.shapes[-1])  # ????
+            shapes.new_colors.remove(self.new_shapes_colors)  # ????
+            shapes.colors.remove(self.colors)
         else:
             shapes.new_colors.append(self.new_shapes_colors)
 
@@ -124,10 +125,12 @@ class NewShape(object):
 
                 self.check_new_shape(grid)
 
-                if empty is False and self.correct is True:
-                    print("saved")
-                else:
+                if not (empty is False and self.correct is True):
                     empty = True
+                    del(shapes.shapes[-1]) #????
+                    shapes.new_colors.remove(self.new_shapes_colors) #????
+                    shapes.colors.remove(self.colors)
+
             else:
                 empty = True
 

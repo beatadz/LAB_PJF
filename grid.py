@@ -1,5 +1,4 @@
 import pygame
-import shapes
 
 class Grid(object):
     def __init__(self, columns, rows, screen, line_thickness, block_side, board_width):

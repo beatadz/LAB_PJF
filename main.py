@@ -16,28 +16,23 @@ def draw_frame(screen, board_width, board_height, line_thickness, color):
 def game_loop(screen, grid_, current_piece, score_, board_width, board_height, line_thickness, screen_width, screen_height):
     # VARIABLES
     frame_color =  (0, 0, 0)
+    background_color = (192, 192, 192)
+    text_color = (0, 0, 0)
+    time = pygame.time.Clock().tick(1000)
     clock = pygame.time.Clock()
     FPS = 60
     speed = 3000
     max_speed = 3000
     move_speed = 2
     rotation_speed = 10
-    rotation_counter = 0
-    move_counter = 0
-    running = True
+    rotation_counter = move_counter = new_shapes_count = 0
+    running = show = True
     falling = clock.tick(FPS)
     start_clicked = creator_clicked = options_clicked = controls_clicked = game_over_clicked = False
     boxes = []
-    show = True
-    pause = False
+    pause = saved = incorrect = False
     is_visible = [True, True, True, True]
-    new_shapes_count = 0
-    background_color = (192, 192, 192)
-    text_color = (0, 0, 0)
-    time = pygame.time.Clock().tick(1000)
     gap = 80
-    saved = False
-    incorrect = False
 
     # IMAGES
     background_image = pygame.image.load("resources/background.png")
@@ -52,8 +47,9 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
 
     # RADIO BUTTONS
     for i in range(len(shapes.shape_colors)):
-        r_button = checkbox.Checkbox(screen, 550, 190 + (i * 50), (255, 255, 255), "color", (0, 0, 0), shapes.shape_colors[i], 20,
-                                     shapes.shape_colors[i], 570, 190 + (i * 50), "arial", shapes.shape_colors[i])
+        r_button = checkbox.Checkbox(screen, 550, 190 + (i * 50), (255, 255, 255), "color", (0, 0, 0),
+                                     shapes.shape_colors[i], 20, shapes.shape_colors[i], 570,
+                                     190 + (i * 50), "arial", shapes.shape_colors[i])
         boxes.append(r_button)
 
     dark_mode_button = checkbox.Checkbox(screen, 100, 190, background_color, "DARK MODE", (0, 0, 0),
@@ -181,10 +177,8 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
             save_button.create_button()
             if save_button.click_check() is True and start_clicked is False:
                 saved = not saved
-                #incorrect = not incorrect
                 new = new_shape.NewShape(grid_)
                 empty = new.save_shape(grid_, new_shapes_count)
-                #print(empty)
                 # draw - "SAVED"
                 if empty is False:
                     saved = True
@@ -215,6 +209,9 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 is_visible[1] = True
                 is_visible[2] = True
                 is_visible[3] = True
+                grid_.clear_creator_grid(boxes)
+                saved = False
+                incorrect = False
             # add start button
             start2_button.create_button()
             if start2_button.click_check() is True:
@@ -413,6 +410,9 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
                 score_.game_score = 0  # reset score
                 game_over_clicked = False
                 current_piece.stop = True
+                grid_.clear_creator_grid(boxes)
+                saved = False
+                incorrect = False
 
                 is_visible[0] = True
                 is_visible[1] = True
