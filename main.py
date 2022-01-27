@@ -33,6 +33,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
     pause = saved = incorrect = False
     is_visible = [True, True, True, True]
     gap = 80
+    rotate = True
 
     # IMAGES
     background_image = pygame.image.load("resources/background.png")
@@ -90,7 +91,7 @@ def game_loop(screen, grid_, current_piece, score_, board_width, board_height, l
         move_counter += 1
         is_down = False
         selected_color = 0
-        rotate = True
+
         time += pygame.time.Clock().tick(1000)
 
         # ESC OR GAME OVER
