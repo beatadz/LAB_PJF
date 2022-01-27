@@ -110,9 +110,9 @@ class NewShape(object):
             self.check_r = False
             self.shape.clear()
             self.row = ""
-            if shapes.shapes:
+            if shapes.shapes and shapes.new_colors and shapes.colors:
                 del (shapes.shapes[-1])  # ????
-                #shapes.new_colors.remove(self.new_shapes_colors)  # ????
+                shapes.new_colors.remove(self.new_shapes_colors)  # ????
                 shapes.colors.remove(self.colors)
         else:
             shapes.new_colors.append(self.new_shapes_colors)
